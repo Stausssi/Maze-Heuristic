@@ -38,21 +38,25 @@ class Board:
         """
 
         output = "Board:"
+        output += "\n" + "_" * 7 * 4
         for row in self._tiles:
             tileRow = [
-                "",
-                "",
-                ""
+                "| ",
+                "| ",
+                "| "
             ]
             for tile in row:
                 for rowIndex, charRow in enumerate(tile.getRepresentation()):
                     tileRow[rowIndex] += " ".join(charRow) + " "
 
             output += "\n"
-            output += "\n".join([charRow for charRow in tileRow])
+            output += "\n".join([charRow + " |" for charRow in tileRow])
+
+        output += "\n" + "-" * 7 * 4
 
         # Add the spare tile
-        output += f"\n\nSpare tile:\n {self.spareTile}"
+        output += "\n\nSpare tile:\n"
+        output += str(self.spareTile)
 
         return output
 

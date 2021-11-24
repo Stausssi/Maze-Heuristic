@@ -77,4 +77,9 @@ class Tile:
         XXX
         """
 
-        return "\n".join([" ".join(line) for line in self.getRepresentation()])
+        output = "_" * 9
+        output += "\n| "
+        output += "\n| ".join([" ".join(line) + " |" for line in self.getRepresentation()])
+        output += "\n"
+        output += "-" * 9
+        return output
