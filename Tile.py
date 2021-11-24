@@ -5,6 +5,14 @@ class Tile:
 
         self.hasPlayer = hasPlayer
 
+    def getRepresentation(self):
+        """
+        Creates the representation list.
+
+        Returns:
+            list[list[str]]: The representation of the tile as a list of list of strings.
+        """
+
         representation = [
             [" ", " ", " "],
             [" ", " ", " "],
@@ -60,7 +68,7 @@ class Tile:
         if self.hasPlayer:
             representation[1][1] = "O"
 
-        self.representation = representation
+        return representation
 
     def __str__(self):
         """
@@ -69,4 +77,4 @@ class Tile:
         XXX
         """
 
-        return "\n".join([" ".join(line) for line in self.representation])
+        return "\n".join([" ".join(line) for line in self.getRepresentation()])

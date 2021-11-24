@@ -20,7 +20,7 @@ class Board:
         for r in range(5):
             column = []
             for c in range(4):
-                hasPlayer = r == 3 and c == 3
+                hasPlayer = r == 3 and c == 2
                 rotatedList = [rotate(valid, random.randint(0, 3)) for valid in validTiles]
                 column.append(
                     Tile(
@@ -30,25 +30,29 @@ class Board:
 
             self._tiles.append(column)
 
+        self.spareTile = Tile([rotate(valid, random.randint(0, 3)) for valid in validTiles][random.randint(0, 2)])
+
     def __str__(self):
         """
         Returns: A string representing the board of tiles
         """
 
-        output = ""
+        output = "Board:"
         for row in self._tiles:
-
             tileRow = [
                 "",
                 "",
                 ""
             ]
             for tile in row:
-                for rowIndex, charRow in enumerate(tile.representation):
+                for rowIndex, charRow in enumerate(tile.getRepresentation()):
                     tileRow[rowIndex] += " ".join(charRow) + " "
 
             output += "\n"
             output += "\n".join([charRow for charRow in tileRow])
+
+        # Add the spare tile
+        output += f"\n\nSpare tile:\n {self.spareTile}"
 
         return output
 
