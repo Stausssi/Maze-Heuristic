@@ -72,9 +72,7 @@ class Tile:
 
     def __str__(self):
         """
-        XXX
-        XXX
-        XXX
+        Returns: The string representation of the Tile.
         """
 
         output = "_" * 9
