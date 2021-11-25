@@ -52,6 +52,8 @@ class Board:
             output += "\n"
             output += "\n".join([charRow + " |" for charRow in tileRow])
 
+        # TODO: if char left from this is not a space, use a horizontal pipe
+
         output += "\n" + "-" * 7 * 4
 
         # Add the spare tile
