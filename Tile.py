@@ -1,4 +1,5 @@
 from util import BoardHelper, wrapInBorder
+from config import tileEncodings
 
 
 class Tile:
@@ -52,6 +53,17 @@ class Tile:
             self.representation[1][1] = BoardHelper.middleConnectors.get(self.connections)
 
         return self.representation
+
+    def getTileCode(self):
+        """
+        Get a code for a tile based on a predefined set of encodings.
+
+        Returns:
+            int: Code for the tile
+
+        """
+
+        return tileEncodings.get(self.connections)
 
     def __str__(self):
         """
