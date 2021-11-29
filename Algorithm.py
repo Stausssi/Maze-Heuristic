@@ -15,12 +15,21 @@ class Algorithm:
         self._g = {}
         self._nodes = {}
 
-    def h(self, node) -> int:
+    def h(self, node):
         """
+        Args:
+            node (Board):
 
         """
 
-        pass
+        # Manhattan distance of player to endTile
+
+        player_row, player_column = node.getPlayerPosition()
+        endTile_row, endTile_column = (0, 3)  # todo: Not hardcoded
+
+        manhattan_distance = abs(player_row - endTile_row) + abs(player_column - endTile_column)
+
+        return manhattan_distance
 
     def g(self, node_key) -> int:
         """
@@ -37,6 +46,27 @@ class Algorithm:
         """
 
         return self.g(node) + self.h(node)
+
+    def reconstruct_path(self, node_key):
+        """
+        Return the path (list of Boards) that resulted in the current node_key.
+
+        Args:
+            node_key (str): Key of the node whose path should be reconstructed
+
+        Returns:
+            list[Board]: Moves that led to the current node
+
+        """
+
+        moves = [self._nodes[node_key]]
+        successor_key = node_key
+
+        while successor_key is not None:
+            successor_key = self._successor[successor_key]
+            moves.insert(0, self._nodes.get(successor_key))
+
+        return moves
 
     def run(self, starting_board: Board):
         """
@@ -58,6 +88,9 @@ class Algorithm:
         # set g_score
         self._g[starting_board_key] = 0
 
+        # set successors
+        self._successor[starting_board_key] = None
+
         while self._open.isNotEmpty():
             # choose node from _open with minimal f(x)
             minimal_f, minimal_node = self._open.pop_smallest()
@@ -68,13 +101,15 @@ class Algorithm:
 
             # check for solution --> player on top right tile and tile _open on top
             if self._nodes.get(minimal_node).did_player_win():
-                return  # todo:  return correct path
+                # return path
+                return self.reconstruct_path(minimal_node)
 
             # loop through all children of node with minimal f
             for expanded_node, expanded_node_key in self.expand_node(self._nodes.get(minimal_node)):
 
                 # Only process node if it is not already in closed
                 if expanded_node_key not in self._closed:
+
                     g = self.g(minimal_node) + 1  # todo: adjust maybe
 
                     # check if expanded node is in open
@@ -87,7 +122,7 @@ class Algorithm:
 
                         # set g and f
                         self._g[expanded_node_key] = g
-                        f = g + self.h(expanded_node_key)  # todo: Adjust h --> pass actual node
+                        f = g + self.h(expanded_node)
 
                         # replace f value for the node, else push expanded node
                         if node_in_open:
@@ -100,7 +135,8 @@ class Algorithm:
 
         print("No solution found!")
 
-    def expand_node(self, node, debug=False):
+    @staticmethod
+    def expand_node(node, debug=False):
 
         """
         Expands a node, and returns all possible nodes (moves that could be played)
@@ -108,6 +144,7 @@ class Algorithm:
 
         Args:
             node(Board) : The Node that should be expanded
+            debug (bool): True if the resulting boards should be printed
 
         Returns:
             tuple[Board, str]: A Tuple of the generated boards and it´s string encodings.
@@ -116,7 +153,8 @@ class Algorithm:
         initial_board = copy.deepcopy(node)
 
         # calculate positions, the player could move to
-        player_positions = initial_board.get_reachable_positions()
+        player_row, player_col = initial_board.getPlayerPosition()
+        player_positions = initial_board.get_reachable_positions(player_row, player_col)
 
         # generate boards, where the player is at those positions
         walkable_boards: List[Board] = []

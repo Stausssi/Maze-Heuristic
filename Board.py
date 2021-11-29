@@ -29,8 +29,8 @@ class Board:
         self.endTile = self._tiles[0][3]
 
         # the position of the player (tile) in the current board: (row, column)
-        self._player_column = 0
-        self._player_row = 0
+        self._player_column = 1
+        self._player_row = 4
 
     def getAdjacentTile(self, position, relative_position):
         """
@@ -69,17 +69,21 @@ class Board:
             # adjacent tile does not exist
             return None, None
 
-    def get_reachable_positions(self):
+    def get_reachable_positions(self, row, column):
         """
         Return a set of tuples, with the positions a player could move to by following the connected pieces.
         This is without the current position of the player.
+
+        Args:
+            row (int): The row of the starting tile
+            column (int): The column of the starting tile
 
         Returns:
             set[tuple[int,int]]: Possible positions, the player could move to, except the current.
 
         """
 
-        open_set = {self.getPlayerPosition()}
+        open_set = {(row, column)}
         closed_set = set()
 
         while len(open_set) != 0:
@@ -124,7 +128,7 @@ class Board:
                     if position_tile.rightOpen and neighbour_tile.leftOpen:
                         open_set.add(neighbour_position)
 
-        return closed_set - {self.getPlayerPosition()}
+        return closed_set - {(row, column)}
 
     def setPlayerPosition(self, column, row):
         """
