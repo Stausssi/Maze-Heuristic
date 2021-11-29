@@ -22,19 +22,20 @@ class OpenHeap:
 
         heapq.heappush(self._nodes, (f, node))
 
-    def pop_smallest(self) -> Node:
+    def pop_smallest(self):
         """
 
         Returns:
+            tuple[int,str]: Node with smallest f
 
         """
 
         return heapq.heappop(self._nodes)
 
-    def replace_or_push(self, node, new_f):
+    def replace(self, node, new_f):
         """
 
-        Replace the f for a node if it exists or else insert the node
+        Replace the f for a node if it exists
 
         Args:
             node:
@@ -49,8 +50,6 @@ class OpenHeap:
                 self._nodes[i] = new_f, node
                 heapq.heapify(self._nodes)
                 break
-        else:
-            self.push(node, new_f)
 
     def isNotEmpty(self):
         """
@@ -65,7 +64,7 @@ class OpenHeap:
         """
 
         Args:
-            contains_node:
+            contains_node(str) :
 
         Returns:
 

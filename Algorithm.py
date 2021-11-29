@@ -8,14 +8,12 @@ from Node import Node
 
 
 class Algorithm:
-    def __init__(self, board):
-        # optimize with dictionairy
-        self._open = OpenHeap()
+    def __init__(self):
+        self._open = OpenHeap()  # also includes the f-score
         self._closed = set()
-        self._path = {}
+        self._successor = {}
         self._g = {}
-
-        self._board = board
+        self._nodes = {}
 
     def h(self, node) -> int:
         """
@@ -24,13 +22,13 @@ class Algorithm:
 
         pass
 
-    def g(self, node) -> int:
+    def g(self, node_key) -> int:
         """
         Cost of the shortest path to node
 
         """
 
-        pass
+        return self._g.get(node_key)
 
     def f(self, node):
         """
@@ -40,65 +38,82 @@ class Algorithm:
 
         return self.g(node) + self.h(node)
 
-    def run(self, board):
+    def run(self, starting_board: Board):
         """
         Run the A star algorithm
 
+        Args:
+            starting_board(Board): The starting board.
+
         """
 
+        starting_board_key = starting_board.generateKey()
+        self._nodes[starting_board_key] = starting_board
+
         # initialize start node
-        start_node = Node(board=board)
-        start_node.setSuccessor(None)
 
         # put start_node in openlist and calculate f = g(s) + h(s) = 0 + h(s)
-        self._open.push(node=start_node, f=0)
+        self._open.push(node=starting_board_key, f=0)
 
-        # add node to path
-        self._path[start_node] = [start_node]
+        # set g_score
+        self._g[starting_board_key] = 0
 
         while self._open.isNotEmpty():
             # choose node from _open with minimal f(x)
-            minimal_node = self._open.pop_smallest()
+            minimal_f, minimal_node = self._open.pop_smallest()
 
             # and put it to _closed
             self._closed.add(minimal_node)
+            # todo: Maybe delete node from "nodes" to save memory
 
             # check for solution --> player on top right tile and tile _open on top
-            if self._board.did_player_win():
-                return self._path  # return correct path
+            if self._nodes.get(minimal_node).did_player_win():
+                return  # todo:  return correct path
 
-            # get costs (g) of minimal node
-
-            # expand node with minimal f
-            for expanded_node in self.expand_node(minimal_node):
+            # loop through all children of node with minimal f
+            for expanded_node, expanded_node_key in self.expand_node(self._nodes.get(minimal_node)):
 
                 # Only process node if it is not already in closed
-                if expanded_node not in self._closed:
-                    g = self.g(minimal_node) + 1  # todo: adjust
+                if expanded_node_key not in self._closed:
+                    g = self.g(minimal_node) + 1  # todo: adjust maybe
 
-                    # Only process node if it is not in OPEN or it has a smaller g value # todo: than what ? 
-                    if not self._open.contains(expanded_node) or g < self.g(expanded_node):
+                    # check if expanded node is in open
+                    node_in_open = self._open.contains(expanded_node_key)
 
+                    # Only process node if it is not in OPEN or it has a smaller g value than existing node
+                    if not node_in_open or g < self.g(expanded_node_key):
                         # set successor of expanded node to minimal_node
-                        expanded_node.setSuccessor(minimal_node)
+                        self._successor[expanded_node_key] = minimal_node
 
-                        expanded_node._g = g
-                        f = g + self.h(expanded_node)
+                        # set g and f
+                        self._g[expanded_node_key] = g
+                        f = g + self.h(expanded_node_key)  # todo: Adjust h --> pass actual node
 
                         # replace f value for the node, else push expanded node
-                        self._open.replace_or_push(expanded_node, f)
+                        if node_in_open:
+                            self._open.replace(expanded_node_key, f)
+                        else:
+                            self._open.push(expanded_node_key, f)
+
+                            # Save the node/board of the expanded key
+                            self._nodes[expanded_node_key] = expanded_node
 
         print("No solution found!")
 
-    def expand_node(self, node) -> [Board]:
+    def expand_node(self, node, debug=False):
 
         """
         Expands a node, and returns all possible nodes (moves that could be played)
         This can either be a movement of the player or a movement of the board.
 
+        Args:
+            node(Board) : The Node that should be expanded
+
+        Returns:
+            tuple[Board, str]: A Tuple of the generated boards and it´s string encodings.
         """
 
-        initial_board = copy.deepcopy(node.getBoard())
+        initial_board = copy.deepcopy(node)
 
         # calculate positions, the player could move to
         player_positions = initial_board.get_reachable_positions()
@@ -118,28 +133,32 @@ class Algorithm:
             new_board.pushSpareTileIn(rowIndex=row_index)
             permutation_boards.append(new_board)
 
-        return walkable_boards, permutation_boards
+        boards = walkable_boards + permutation_boards
+
+        if debug:
+            print(f"______________ walkable boards ______________")
+            for board in walkable_boards:
+                print(board)
+
+            print("______________ permutation boards ______________")
+            for board in permutation_boards:
+                print(board)
+
+        # create keys for each board
+        return [(board, board.generateKey()) for board in boards]
 
 
 if __name__ == "__main__":
     board = Board()
 
-    test = Algorithm(board)
+    test = Algorithm()
 
     board.setPlayerPosition(3, 2)
     print("--------- initial board ------------")
     print(board)
-    walkable_boards, permutation_boards = test.expand_node(Node(board))
-    print(f"______________ walkable boards ({len(walkable_boards)}) ______________")
+    boards = test.expand_node(board)
 
-    for board in walkable_boards:
-        print(board.generateKey())
+    print(f"______________ possible boards ______________")
+    for board, key in boards:
+        print(key)
         print(board)
-    print("______________ permutation boards ______________")
-    for board in permutation_boards:
-        print(board.generateKey())
-        print(board)
-
-
-
-
