@@ -2,44 +2,6 @@ import random
 
 from Tile import Tile
 from util import BoardHelper, wrapInBorder
-from config import tileEncodings
-
-
-def generateBord(tile_codes, spareTile_code, startTile_column, endTile_column):
-    """
-
-    Args:
-        endTile_column:
-        tile_codes:
-        spareTile_code:
-        startTile_column:
-
-    Returns:
-
-    """
-
-    reversed_tile_encodings = dict((v, k) for (k, v) in tileEncodings.items())
-
-    tiles = []
-    for r in tile_codes:
-        column = []
-        for tile_code in r:
-            column.append(
-                Tile(
-                    reversed_tile_encodings.get(tile_code)
-                )
-            )
-
-        tiles.append(column)
-
-    # get the sparetile
-    spareTile = Tile(reversed_tile_encodings.get(spareTile_code))
-
-    # Set the start and end positions
-    start_tile_pos = (len(tiles)-1, startTile_column)
-    end_tile_pos = (0, endTile_column)
-
-    return Board(tiles=tiles, spareTile=spareTile, startTile_pos=start_tile_pos, endTile_pos=end_tile_pos)
 
 
 class Board:
@@ -60,6 +22,8 @@ class Board:
             # the position of the player (tile) in the current board: (row, column)
             self._player_column = self._startTile_column
             self._player_row = self._startTile_row
+
+            self.setPlayerPosition(self._startTile_column, self._startTile_row)
         else:
             self._tiles = []
 
@@ -378,17 +342,3 @@ class Board:
         output += wrapInBorder(str(self._spareTile))
 
         return output
-
-
-if __name__ == '__main__':
-    board = Board()
-    print(board)
-
-    print("\nAfter pushing the spare Tile in:\n")
-    board.pushSpareTileIn(4)
-    print(board)
-    board._tiles[1][2].hasPlayer = True
-    board._player_position = (1, 2)
-    print(board.get_reachable_positions())
-
-    print(wrapInBorder("KI\nAufgabe ist\nnervig.\n\n- Herr Reichhardt"))
