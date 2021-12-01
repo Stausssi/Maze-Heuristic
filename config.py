@@ -25,7 +25,3 @@ tileEncodings = {
 }
 
 reversedTileEncodings = dict((v, k) for (k, v) in tileEncodings.items())
-
-# startColumn = 1
-#
-# endColumn = 3

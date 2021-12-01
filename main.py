@@ -19,8 +19,9 @@ def main():
 
     print(f"Took {len(path)} moves!")
 
-    for node in path:
+    for step, node in enumerate(path):
         if node is not None:
+            print(f"\n\n\n\n\n---------- [Step {step}] ----------\n")
             print(node)
 
 
