@@ -3,7 +3,6 @@ from Board import Board
 
 class Node:
     def __init__(self, board):
-
         # board configuration
         self._board = board
         self._successor = None
@@ -17,4 +16,3 @@ class Node:
 
     def getBoard(self) -> Board:
         return self._board
-

@@ -1,5 +1,4 @@
 from Algorithm import Algorithm
-# from config import startColumn, endColumn
 from util import BoardHelper
 
 
@@ -11,8 +10,6 @@ def main():
 
     board = BoardHelper.generateBoard(field, spareTile, startColumn, endColumn)
 
-    # board.setPlayerPosition(2, 3)
-    # board.setPlayerPosition(column=1, row=4)
     print(board)
     alg = Algorithm()
     path = alg.run(board)

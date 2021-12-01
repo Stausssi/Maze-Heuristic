@@ -2,7 +2,6 @@ import csv
 from typing import Tuple, List
 
 from Tile import Tile
-from config import reversedTileEncodings
 
 
 class BoardHelper:
@@ -43,9 +42,37 @@ class BoardHelper:
         [True, False, False, True]
     ]
 
+    tileEncodings = {
+        # True in the Tuple indicates positions where the tile is open
+        # based on: (top, right, bottom, left)
+
+        # Corner 1
+        (False, True, True, False): 0,
+        # Corner 2
+        (False, False, True, True): 1,
+        # Corner 3
+        (True, True, False, False): 2,
+        # Corner 4
+        (True, False, False, True): 3,
+        # Intersection 1
+        (False, True, True, True): 4,
+        # Intersection 2
+        (True, False, True, True): 5,
+        # Intersection 3
+        (True, True, False, True): 6,
+        # Intersection 4
+        (True, True, True, False): 7,
+        # Line 1
+        (True, False, True, False): 8,
+        # Line 2
+        (False, True, False, True): 9,
+    }
+
+    reversedTileEncodings = dict((v, k) for (k, v) in tileEncodings.items())
+
     @staticmethod
-    def rotate(l, n):
-        return l[-n:] + l[:-n]
+    def rotate(listToRotate, n):
+        return listToRotate[-n:] + listToRotate[:-n]
 
     @staticmethod
     def readBoardFromCSV(path) -> Tuple[List[List[int]], int]:
@@ -132,14 +159,14 @@ class BoardHelper:
             for tile_code in r:
                 column.append(
                     Tile(
-                        reversedTileEncodings.get(tile_code)
+                        BoardHelper.reversedTileEncodings.get(tile_code)
                     )
                 )
 
             tiles.append(column)
 
         # get the sparetile
-        spareTile = Tile(reversedTileEncodings.get(spareTile_code))
+        spareTile = Tile(BoardHelper.reversedTileEncodings.get(spareTile_code))
 
         # Set the start and end positions
         start_tile_pos = (len(tiles) - 1, startTile_column)
@@ -182,4 +209,3 @@ def wrapInBorder(message) -> str:
     output += "\u2517" + "\u2501" * (maxLength + 2) + "\u251B"
 
     return output
-

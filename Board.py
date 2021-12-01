@@ -334,17 +334,3 @@ class Board:
         output += wrapInBorder(str(self._spareTile))
 
         return output
-
-
-if __name__ == '__main__':
-    board = Board()
-    print(board)
-
-    print("\nAfter pushing the spare Tile in:\n")
-    board.pushSpareTileIn(4)
-    print(board)
-    board._tiles[1][2].hasPlayer = True
-    board._player_position = (1, 2)
-    print(board.get_reachable_positions())
-
-    print(wrapInBorder("KI\nAufgabe ist\nnervig.\n\n- Herr Reichhardt"))

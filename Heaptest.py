@@ -11,4 +11,3 @@ for i in range(4):
     print(test.pop_smallest())
 
 ff = [(1, "r"), (2, "s"), (4, "v")]
-

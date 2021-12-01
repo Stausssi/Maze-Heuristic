@@ -1,6 +1,3 @@
-from config import tileEncodings
-
-
 class Tile:
     def __init__(self, connections, hasPlayer=False):
         """
@@ -45,11 +42,12 @@ class Tile:
             list[list[str]]: The representation of the tile as a list of list of strings.
         """
 
+        from util import BoardHelper
+
         # Determine the middle
         if self.hasPlayer:
             self.representation[1][1] = "\u25EF"
         else:
-            from util import BoardHelper
             self.representation[1][1] = BoardHelper.middleConnectors.get(self.connections)
 
         return self.representation
@@ -62,7 +60,9 @@ class Tile:
             int: Code for the tile
         """
 
-        return tileEncodings.get(self.connections)
+        from util import BoardHelper
+
+        return BoardHelper.tileEncodings.get(self.connections)
 
     def __str__(self):
         """
