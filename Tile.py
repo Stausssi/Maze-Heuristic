@@ -1,4 +1,3 @@
-from util import BoardHelper, wrapInBorder
 from config import tileEncodings
 
 
@@ -50,6 +49,7 @@ class Tile:
         if self.hasPlayer:
             self.representation[1][1] = "\u25EF"
         else:
+            from util import BoardHelper
             self.representation[1][1] = BoardHelper.middleConnectors.get(self.connections)
 
         return self.representation
@@ -60,14 +60,13 @@ class Tile:
 
         Returns:
             int: Code for the tile
-
         """
 
         return tileEncodings.get(self.connections)
 
     def __str__(self):
         """
-        Returns: The string representation of the Tile with a border around it.
+        Returns: The string representation of the Tile.
         """
 
         return "\n".join([" ".join(line) for line in self.getRepresentation()])

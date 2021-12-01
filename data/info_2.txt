@@ -1,0 +1,7 @@
+Startposition:
+
+Spalte 2 unten
+
+Zielposition
+
+Spalte 4 oben

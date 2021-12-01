@@ -1,3 +1,10 @@
+import csv
+from typing import Tuple, List
+
+from Tile import Tile
+from config import reversedTileEncodings
+
+
 class BoardHelper:
     middleConnectors = {
         # # Cross in the middle
@@ -40,6 +47,106 @@ class BoardHelper:
     def rotate(l, n):
         return l[-n:] + l[:-n]
 
+    @staticmethod
+    def readBoardFromCSV(path) -> Tuple[List[List[int]], int]:
+        """
+        Reads a board from a given CSV and returns the tiles list and a spare tile
+
+        Args:
+            path (str): The path to the CSV file
+
+        Returns:
+            tuple: The Tiles of the Board and the spare Tile
+        """
+
+        with open(path) as csvFile:
+            csvReader = csv.reader(csvFile, delimiter=";")
+
+            tiles = []
+            spareTile = None
+            for rowCount, row in enumerate(csvReader):
+                if rowCount <= 4:
+                    rowList = []
+                    for encodedTile in row:
+                        rowList.append(int(encodedTile))
+                    tiles.append(rowList)
+                else:
+                    spareTile = int(row[0])
+
+            return tiles, spareTile
+
+    @staticmethod
+    def readBoardInformation(filepath) -> Tuple[int, int]:
+        """
+        Reads the textfile at the given path and decodes the information for start and end.
+
+        Args:
+            filepath (str): The path to the file
+
+        Returns:
+            tuple[int, int]: A tuple containing the column of the start and end point in that order
+        """
+
+        mapping = {
+            "Startposition:": 0,
+            "Zielposition": 0
+        }
+        nextValue = ""
+
+        with open(filepath) as informationFile:
+            for line in informationFile:
+                line = line.strip().strip("\n").strip("\t")
+                if len(line) > 0:
+                    if mapping.get(line) is not None:
+                        nextValue = line
+                    elif nextValue != "":
+                        lineContent = line.replace("Spalte ", "").split(" ")
+
+                        mapping.update({
+                            nextValue: int(lineContent[0])
+                        })
+
+                        nextValue = ""
+
+        return mapping.get("Startposition:") - 1, mapping.get("Zielposition") - 1
+
+    @staticmethod
+    def generateBoard(tile_codes, spareTile_code, startTile_column, endTile_column):
+        """
+
+        Args:
+            endTile_column:
+            tile_codes:
+            spareTile_code:
+            startTile_column:
+
+        Returns:
+
+        """
+
+        from Board import Board
+
+        tiles = []
+        for r in tile_codes:
+            column = []
+            for tile_code in r:
+                column.append(
+                    Tile(
+                        reversedTileEncodings.get(tile_code)
+                    )
+                )
+
+            tiles.append(column)
+
+        # get the sparetile
+        spareTile = Tile(reversedTileEncodings.get(spareTile_code))
+
+        # Set the start and end positions
+        start_tile_pos = (len(tiles) - 1, startTile_column)
+        end_tile_pos = (0, endTile_column)
+
+        return Board(tiles=tiles, spareTile=spareTile, startTile_pos=start_tile_pos, endTile_pos=end_tile_pos)
+
 
 def wrapInBorder(message) -> str:
     """
@@ -75,3 +182,4 @@ def wrapInBorder(message) -> str:
     output += "\u2517" + "\u2501" * (maxLength + 2) + "\u251B"
 
     return output
+
