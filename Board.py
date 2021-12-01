@@ -2,10 +2,81 @@ import random
 
 from Tile import Tile
 from util import BoardHelper, wrapInBorder
+from config import tileEncodings
+
+
+def generateBord(tile_codes, spareTile_code, startTile_column, endTile_column):
+    """
+
+    Args:
+        endTile_column:
+        tile_codes:
+        spareTile_code:
+        startTile_column:
+
+    Returns:
+
+    """
+
+    reversed_tile_encodings = dict((v, k) for (k, v) in tileEncodings.items())
+
+    tiles = []
+    for r in tile_codes:
+        column = []
+        for tile_code in r:
+            column.append(
+                Tile(
+                    reversed_tile_encodings.get(tile_code)
+                )
+            )
+
+        tiles.append(column)
+
+    # get the sparetile
+    spareTile = Tile(reversed_tile_encodings.get(spareTile_code))
+
+    # Set the start and end positions
+    start_tile_pos = (len(tiles)-1, startTile_column)
+    end_tile_pos = (0, endTile_column)
+
+    return Board(tiles=tiles, spareTile=spareTile, startTile_pos=start_tile_pos, endTile_pos=end_tile_pos)
 
 
 class Board:
-    def __init__(self):
+    def __init__(self, tiles=None, spareTile=None, startTile_pos=None, endTile_pos=None):
+
+        if tiles is not None and spareTile is not None and startTile_pos is not None and endTile_pos is not None:
+            self._tiles = tiles
+
+            # create a random spare tile
+            self._spareTile = spareTile
+
+            # Set the start and end
+            self._startTile_row = startTile_pos[0]
+            self._startTile_column = startTile_pos[1]
+            self._endTile_row = endTile_pos[0]
+            self._endTile_column = endTile_pos[1]
+
+            # the position of the player (tile) in the current board: (row, column)
+            self._player_column = self._startTile_column
+            self._player_row = self._startTile_row
+        else:
+            self._tiles = []
+
+            # create a random spare tile
+            self._spareTile = None
+
+            # Set the start and end
+            self._startTile_row = None
+            self._startTile_column = None
+            self._endTile_row = None
+            self._endTile_column = None
+
+            # the position of the player (tile) in the current board: (row, column)
+            self._player_column = None
+            self._player_row = None
+
+    def initRandom(self):
         self._tiles = []
         for r in range(5):
             column = []
@@ -20,13 +91,15 @@ class Board:
             self._tiles.append(column)
 
         # create a random spare tile
-        self.spareTile = Tile(
+        self._spareTile = Tile(
             [BoardHelper.rotate(valid, random.randint(0, 3)) for valid in BoardHelper.validTiles][random.randint(0, 2)]
         )
 
         # Set the start and end
-        self.startTile = self._tiles[4][1]
-        self.endTile = self._tiles[0][3]
+        self._startTile_row = 4
+        self._startTile_column = 1
+        self._endTile_row = 0
+        self._endTile_column = 3
 
         # the position of the player (tile) in the current board: (row, column)
         self._player_column = 1
@@ -159,7 +232,18 @@ class Board:
             True, if the player stands of the top right tile and the top is open.
         """
 
-        return self.endTile.hasPlayer and self.endTile.topOpen
+        endTile = self.get_endTile()
+
+        return endTile.hasPlayer and endTile.topOpen
+
+    def get_endTile(self):
+        """
+
+        Returns:
+            Tile: Endtile
+        """
+
+        return self._tiles[self._endTile_row][self._endTile_column]
 
     def pushSpareTileIn(self, rowIndex):
         """
@@ -178,18 +262,18 @@ class Board:
                 # Insert from the right
                 outgoingTile = tileRow[0]
                 tileRow.remove(outgoingTile)
-                tileRow.append(self.spareTile)
+                tileRow.append(self._spareTile)
             else:
                 # Insert from the left
-                tileRow.insert(0, self.spareTile)
+                tileRow.insert(0, self._spareTile)
                 outgoingTile = tileRow.pop(len(tileRow) - 1)
 
             # if player is pushed out of the board, place him on the spareTile
             if outgoingTile.hasPlayer:
-                self.spareTile.hasPlayer = True
+                self._spareTile.hasPlayer = True
                 outgoingTile.hasPlayer = False
 
-            self.spareTile = outgoingTile
+            self._spareTile = outgoingTile
             self._tiles[rowIndex] = tileRow
 
             # update the position of the player
@@ -225,34 +309,6 @@ class Board:
 
         return len(self._tiles), len(self._tiles[0])
 
-    def __str__(self):
-        """
-        Returns: A string representing the board of tiles
-        """
-
-        output = "Board:\n"
-
-        outputList = []
-        for row in self._tiles:
-            tileRow = [
-                "",
-                "",
-                ""
-            ]
-            for tile in row:
-                for rowIndex, charRow in enumerate(str(tile).split("\n")):
-                    tileRow[rowIndex] += " " + charRow
-
-            outputList.extend(tileRow)
-
-        output += wrapInBorder(outputList)
-
-        # Add the spare tile
-        output += "\n\nSpare tile:\n"
-        output += wrapInBorder(str(self.spareTile))
-
-        return output
-
     def generateKey(self):
         """
         Generate a string for a dictionary, that encodes the whole information of the board, including the player
@@ -277,7 +333,7 @@ class Board:
                 key += str(tile.getTileCode())
 
         # encode the spare tile
-        key += str(self.spareTile.getTileCode())
+        key += str(self._spareTile.getTileCode())
 
         # encode the position of the player
         key += str(self._player_row)
@@ -286,6 +342,34 @@ class Board:
         # todo: encode, if player is on board
 
         return key
+
+    def __str__(self):
+        """
+        Returns: A string representing the board of tiles
+        """
+
+        output = "Board:\n"
+
+        outputList = []
+        for row in self._tiles:
+            tileRow = [
+                "",
+                "",
+                ""
+            ]
+            for tile in row:
+                for rowIndex, charRow in enumerate(str(tile).split("\n")):
+                    tileRow[rowIndex] += " " + charRow
+
+            outputList.extend(tileRow)
+
+        output += wrapInBorder(outputList)
+
+        # Add the spare tile
+        output += "\n\nSpare tile:\n"
+        output += wrapInBorder(str(self._spareTile))
+
+        return output
 
 
 if __name__ == '__main__':

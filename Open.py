@@ -75,3 +75,12 @@ class OpenHeap:
                 return True
         else:
             return False
+
+    def size(self):
+        """
+
+        Returns:
+
+        """
+
+        return len(self._nodes)

@@ -4,7 +4,7 @@ from typing import List
 
 from Board import Board
 from Open import OpenHeap
-from Node import Node
+from itertools import product
 
 
 class Algorithm:
@@ -14,6 +14,22 @@ class Algorithm:
         self._successor = {}
         self._g = {}
         self._nodes = {}
+
+    @staticmethod
+    def manhattan_dist(x1, y1, x2, y2):
+        return abs(x1 - x2) + abs(y1 - y2)
+
+    @staticmethod
+    def euclid_dist_int(x1, y1, x2, y2):
+        return int(((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5)
+
+    @staticmethod
+    def euclid_dist(x1, y1, x2, y2):
+        return ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5
+
+    @staticmethod
+    def min_distance_product(self, list1, list2):
+        min([self.euclid_dist(x1, y1, x2, y2) for (x1, x2), (y1, y2) in product(list1, list2)])
 
     def h(self, node):
         """
@@ -27,9 +43,20 @@ class Algorithm:
         player_row, player_column = node.getPlayerPosition()
         endTile_row, endTile_column = (0, 3)  # todo: Not hardcoded
 
-        manhattan_distance = abs(player_row - endTile_row) + abs(player_column - endTile_column)
+        # player_to_end = self.manhattan_dist(player_row, player_column, endTile_row, endTile_column)
+        player_to_end = self.euclid_dist_int(player_row, player_column, endTile_row, endTile_column)
 
-        return manhattan_distance
+        # end_positions = node.get_reachable_positions(endTile_row, endTile_column)
+        # end_positions.add((0, 3))
+
+        # player_positions = node.get_reachable_positions(player_row, player_column)
+        # player_positions.add((player_row, player_column))
+
+        # min_dist = min([self.euclid_dist_int(player_row, player_column, row, column) for row, column in positions])
+
+        # max_dist = min([self.euclid_dist_int(player_row, player_column, row, column) for row, column in positions])
+
+        return player_to_end
 
     def g(self, node_key) -> int:
         """
@@ -83,7 +110,7 @@ class Algorithm:
         # initialize start node
 
         # put start_node in openlist and calculate f = g(s) + h(s) = 0 + h(s)
-        self._open.push(node=starting_board_key, f=0)
+        self._open.push(node=starting_board_key, f=self.h(starting_board))
 
         # set g_score
         self._g[starting_board_key] = 0
@@ -92,6 +119,9 @@ class Algorithm:
         self._successor[starting_board_key] = None
 
         while self._open.isNotEmpty():
+            # Logging
+            print(f"Open: {self._open.size()}, Closed: {len(self._closed)}")
+
             # choose node from _open with minimal f(x)
             minimal_f, minimal_node = self._open.pop_smallest()
 
@@ -132,8 +162,6 @@ class Algorithm:
 
                             # Save the node/board of the expanded key
                             self._nodes[expanded_node_key] = expanded_node
-
-        print("No solution found!")
 
     @staticmethod
     def expand_node(node, debug=False):
@@ -191,7 +219,7 @@ if __name__ == "__main__":
 
     test = Algorithm()
 
-    board.setPlayerPosition(3, 2)
+    board.setPlayerPosition(1, 4)
     print("--------- initial board ------------")
     print(board)
     boards = test.expand_node(board)

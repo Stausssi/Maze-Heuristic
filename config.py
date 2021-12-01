@@ -23,3 +23,17 @@ tileEncodings = {
     # Line 2
     (False, True, False, True): 9,
 }
+
+field = [
+    [3, 4, 6, 7],
+    [2, 5, 4, 1],
+    [0, 9, 2, 9],
+    [2, 6, 5, 1],
+    [0, 4, 8, 3]
+]
+
+spareTile = 8
+
+startColumn = 1
+
+endColumn = 3
