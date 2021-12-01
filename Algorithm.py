@@ -4,7 +4,7 @@ from typing import List
 
 from Board import Board
 from Open import OpenHeap
-from itertools import product
+from util import min_distance_product, heuristic_floor_euclid, heuristic_shortest_distance_end_path_player_path
 
 
 class Algorithm:
@@ -15,22 +15,6 @@ class Algorithm:
         self._g = {}
         self._nodes = {}
 
-    @staticmethod
-    def manhattan_dist(x1, y1, x2, y2):
-        return abs(x1 - x2) + abs(y1 - y2)
-
-    @staticmethod
-    def euclid_dist_int(x1, y1, x2, y2):
-        return int(((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5)
-
-    @staticmethod
-    def euclid_dist(x1, y1, x2, y2):
-        return ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5
-
-    @staticmethod
-    def min_distance_product(self, list1, list2):
-        min([self.euclid_dist(x1, y1, x2, y2) for (x1, x2), (y1, y2) in product(list1, list2)])
-
     def h(self, node):
         """
         Args:
@@ -38,25 +22,13 @@ class Algorithm:
 
         """
 
-        # Manhattan distance of player to endTile
+        player_pos = node.getPlayerPosition()
+        end_tile_pos = node.getEndTile()
 
-        player_row, player_column = node.getPlayerPosition()
-        endTile_row, endTile_column = (0, 3)  # todo: Not hardcoded
+        heuristic = heuristic_shortest_distance_end_path_player_path(node, player_pos, end_tile_pos)
+        # heuristic = heuristic_floor_euclid(player_pos, endTile_pos)
 
-        # player_to_end = self.manhattan_dist(player_row, player_column, endTile_row, endTile_column)
-        player_to_end = self.euclid_dist_int(player_row, player_column, endTile_row, endTile_column)
-
-        # end_positions = node.get_reachable_positions(endTile_row, endTile_column)
-        # end_positions.add((0, 3))
-
-        # player_positions = node.get_reachable_positions(player_row, player_column)
-        # player_positions.add((player_row, player_column))
-
-        # min_dist = min([self.euclid_dist_int(player_row, player_column, row, column) for row, column in positions])
-
-        # max_dist = min([self.euclid_dist_int(player_row, player_column, row, column) for row, column in positions])
-
-        return player_to_end
+        return heuristic
 
     def g(self, node_key) -> int:
         """

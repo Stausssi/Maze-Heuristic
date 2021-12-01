@@ -1,3 +1,6 @@
+from itertools import product
+
+
 class BoardHelper:
     middleConnectors = {
         # # Cross in the middle
@@ -75,3 +78,78 @@ def wrapInBorder(message) -> str:
     output += "\u2517" + "\u2501" * (maxLength + 2) + "\u251B"
 
     return output
+
+
+def manhattan_dist(x1, y1, x2, y2):
+    return abs(x1 - x2) + abs(y1 - y2)
+
+
+def floor_euclid_dist(x1, y1, x2, y2):
+    return int(((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5)
+
+
+def euclid_dist(x1, y1, x2, y2):
+    return ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5
+
+
+def min_distance_product(list1, list2):
+    """
+    
+    Args:
+        list1: 
+        list2: 
+
+    Returns:
+
+    """
+
+    list1 = list(list1)
+    list2 = list(list2)
+
+    distances = []
+
+    for x1, y1 in list1:
+        for x2, y2 in list2:
+            distances.append(floor_euclid_dist(x1, y1, x2, y2))
+
+    return min(distances)
+
+
+# Heuristics
+
+def heuristic_shortest_distance_end_path_player_path(node, player_pos, end_tile_pos):
+    """
+
+    Args:
+        node:
+
+    Returns:
+
+    """
+
+    player_row, player_column = player_pos
+    endTile_row, endTile_column = end_tile_pos
+
+    end_positions = node.get_reachable_positions(endTile_row, endTile_column)
+    end_positions.add((endTile_row, endTile_column))
+
+    player_positions = node.get_reachable_positions(player_row, player_column)
+    player_positions.add((player_row, player_column))
+
+    return min_distance_product(end_positions, player_positions)
+
+
+def heuristic_floor_euclid(player_pos, end_tile_pos):
+    player_row, player_column = player_pos
+    endTile_row, endTile_column = end_tile_pos
+
+    return floor_euclid_dist(player_row, player_column, endTile_row, endTile_column)
+
+
+if __name__ == "__main__":
+    import timeit
+
+    list1 = [(1, 2), (1, 1), (5, 2)]
+    list2 = [(3, 4), (2, 3)]
+
+    print(min_distance_product(list1, list2))

@@ -309,6 +309,14 @@ class Board:
 
         return len(self._tiles), len(self._tiles[0])
 
+    def getEndTile(self):
+        """
+
+        Returns:
+
+        """
+        return self._endTile_row, self._endTile_column
+
     def generateKey(self):
         """
         Generate a string for a dictionary, that encodes the whole information of the board, including the player
