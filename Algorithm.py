@@ -4,7 +4,7 @@ from typing import List
 
 from Board import Board
 from Open import OpenHeap
-from util import min_distance_product, heuristic_floor_euclid, heuristic_shortest_distance_end_path_player_path
+from Heuristics import Heuristics
 
 
 class Algorithm:
@@ -25,10 +25,12 @@ class Algorithm:
         player_pos = node.getPlayerPosition()
         end_tile_pos = node.getEndTile()
 
-        heuristic = heuristic_shortest_distance_end_path_player_path(node, player_pos, end_tile_pos)
-        # heuristic = heuristic_floor_euclid(player_pos, endTile_pos)
-
-        return heuristic
+        # return Heuristics.euclid(player_pos, end_tile_pos)
+        # return Heuristics.shortest_distance_end_path_player_path(node, player_pos, end_tile_pos)
+        # return Heuristics.manhattan(player_pos, end_tile_pos)
+        # return Heuristics.minkowski(player_pos, end_tile_pos, 2)
+        # return Heuristics.minkowski(player_pos, end_tile_pos, 3)
+        return Heuristics.chebyshev(player_pos, end_tile_pos)
 
     def g(self, node_key) -> int:
         """

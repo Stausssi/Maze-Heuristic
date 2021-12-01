@@ -1,7 +1,8 @@
 class Tile:
     def __init__(self, connections, hasPlayer=False):
         """
-
+        Represents a graphical Tile in the Board.
+        
         Args:
             connections (tuple[bool, bool, bool, bool): The connections of the tile. Order is: Top, Right, Bottom, Left.
             hasPlayer (bool): Whether the player is standing on this Tile.
