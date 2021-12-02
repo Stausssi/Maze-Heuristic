@@ -1,5 +1,6 @@
-from scipy.spatial import distance
 from decimal import getcontext
+
+from scipy.spatial import distance
 
 getcontext().prec = 2 * 1000
 

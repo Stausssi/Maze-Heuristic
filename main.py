@@ -1,7 +1,6 @@
 from multiprocessing import Pool
 
 import Algorithm
-import Heuristics
 from Algorithm import Algorithm
 from Board import Board
 from util import BoardHelper

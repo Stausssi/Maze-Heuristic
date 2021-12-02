@@ -1,12 +1,10 @@
 import copy
-
+from functools import partial
 from typing import List
 
-from cytoolz.functoolz import partial
-
 from Board import Board
-from Open import OpenHeap
 from Heuristics import Heuristics
+from Open import OpenHeap
 
 current_heuristic = ""
 
