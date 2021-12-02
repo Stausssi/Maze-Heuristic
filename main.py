@@ -24,7 +24,7 @@ def evaluateBoard(param):
 
 
 def main():
-    board_count = 2
+    board_count = 30
 
     heuristics = [
         "minkowski", "minkowski_int",
