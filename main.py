@@ -24,7 +24,7 @@ def evaluateBoard(param):
 
 
 def main():
-    board_count = 30
+    board_count = 10
 
     heuristics = [
         "minkowski", "minkowski_int",
@@ -63,6 +63,7 @@ def main():
     paths = threadPoolCalc(boards, "manhattan")
     for i, path in enumerate(paths):
         if path[1] < 0:
+            print("Pop Board!")
             boards.pop(i)
 
     for heuristic in heuristics:
