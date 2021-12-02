@@ -34,6 +34,7 @@ class Algorithm:
         # return Heuristics.min_shortest_distance_and_euclid(node, player_pos, end_tile_pos)
         # return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos)
         # return Heuristics.weighted_sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, 0.5, 0.5,isInt=True)
+        # return Heuristics.weighted_sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, 0.5, 0.5,isInt=False)
         # return Heuristics.harmonic_mean(node, player_pos, end_tile_pos)
         # return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, weight_path=2)
         # return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, weight_euclid=0.5)
