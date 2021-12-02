@@ -32,7 +32,10 @@ class Algorithm:
         # return Heuristics.minkowski(player_pos, end_tile_pos, 3)
         # return Heuristics.chebyshev(player_pos, end_tile_pos)
         # return Heuristics.min_shortest_distance_and_euclid(node, player_pos, end_tile_pos)
-        return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos)
+        # return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos)
+        return Heuristics.weighted_sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, 0.5, 0.5,
+                                                                    isInt=True)
+        # return Heuristics.harmonic_mean(node, player_pos, end_tile_pos)
 
     def g(self, node_key) -> int:
         """
@@ -103,7 +106,6 @@ class Algorithm:
 
             # and put it to _closed
             self._closed.add(minimal_node)
-            # todo: Maybe delete node from "nodes" to save memory
 
             # check for solution --> player on top right tile and tile _open on top
             if self._nodes.get(minimal_node).did_player_win():
@@ -116,7 +118,8 @@ class Algorithm:
                 # Only process node if it is not already in closed
                 if expanded_node_key not in self._closed:
 
-                    g = self.g(minimal_node) + 1  # todo: adjust maybe
+                    # calculate the g value of the new node
+                    g = self.g(minimal_node) + 1
 
                     # check if expanded node is in open
                     node_in_open = self._open.contains(expanded_node_key)
@@ -138,6 +141,9 @@ class Algorithm:
 
                             # Save the node/board of the expanded key
                             self._nodes[expanded_node_key] = expanded_node
+
+            # delete minimal node object
+            del self._nodes[minimal_node]
 
     @staticmethod
     def expand_node(node, debug=False):
