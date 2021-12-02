@@ -24,7 +24,7 @@ def evaluateBoard(param):
 
 
 def main():
-    board_count = 10
+    board_count = 2
 
     heuristics = [
         "minkowski", "minkowski_int",
@@ -59,11 +59,8 @@ def main():
         board.initRandom()
         boards.append(board)
 
-    # Remove all boards from the list, if manhattan can't complete them
-    # paths = threadPoolCalc(boards, "manhattan")
-    # for i, path in enumerate(paths):
-    #     if path[1] < 0:
-    #         boards.pop(i)
+    allMoves = []
+    allOpen = []
 
     for heuristic in heuristics:
         print(f"Calculating with {heuristic}...")
@@ -77,10 +74,24 @@ def main():
                 moves.append(len(path[0]))
                 openCount.append(path[1])
             else:
+                print(f"{heuristic} failed with Board {index}!")
+                # Remove board from boards
                 boards.pop(index)
 
-            # print(f"Solving Board {index + 1} took {len(path[0])} Moves with {path[1]} open")
+                # Remove previous entries of the board with previous heuristics
+                for prevMoves in allMoves:
+                    prevMoves.pop(index)
+                for prevOpenCounts in allOpen:
+                    prevOpenCounts.pop(index)
 
+        allMoves.append(moves)
+        allOpen.append(openCount)
+        print(f"{heuristic} done!")
+
+    print(allMoves)
+    print(allOpen)
+
+    for heuristic, moves, openCount in zip(heuristics, allMoves, allOpen):
         avgMoves = sum(moves) / len(moves)
         stdMoves = stdev(moves)
         avgOpen = sum(openCount) / len(openCount)
@@ -89,7 +100,6 @@ def main():
         heuristics_values.update({
             heuristic: (avgMoves, stdMoves, avgOpen, stdOpen)
         })
-        print(f"{heuristic} done!")
 
     print(heuristics_values)
 
