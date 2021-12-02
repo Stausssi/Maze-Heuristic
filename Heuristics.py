@@ -86,7 +86,10 @@ class Heuristics:
         player_positions = node.get_reachable_positions(player_row, player_column)
         player_positions.add((player_row, player_column))
 
-        return int(Heuristics.min_distance_product(end_positions, player_positions))
+        if isInt:
+            return int(Heuristics.min_distance_product(end_positions, player_positions))
+        else:
+            return Heuristics.min_distance_product(end_positions, player_positions)
 
     @staticmethod
     def min_shortest_distance_and_euclid(node, player_pos, end_tile_pos):
