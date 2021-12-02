@@ -2,9 +2,14 @@ import csv
 from typing import Tuple, List
 
 from Tile import Tile
+from Board import Board
 
 
 class BoardHelper:
+    """
+    Basic class containing helpful functions and variables for the board.
+    """
+
     middleConnectors = {
         # # Cross in the middle
         # (True, True, True, True): "\u256C",
@@ -72,6 +77,17 @@ class BoardHelper:
 
     @staticmethod
     def rotate(listToRotate, n):
+        """
+        Rotates the list n times.
+
+        Args:
+            listToRotate (list): The list to rotate
+            n (int): The number of rotations
+
+        Returns:
+            list: The rotated list.
+        """
+
         return listToRotate[-n:] + listToRotate[:-n]
 
     @staticmethod
@@ -92,12 +108,14 @@ class BoardHelper:
             tiles = []
             spareTile = None
             for rowCount, row in enumerate(csvReader):
+                # First 4 lines are tiles
                 if rowCount <= 4:
                     rowList = []
                     for encodedTile in row:
                         rowList.append(int(encodedTile))
                     tiles.append(rowList)
                 else:
+                    # Last row contains the spare tile
                     spareTile = int(row[0])
 
             return tiles, spareTile
@@ -124,9 +142,11 @@ class BoardHelper:
             for line in informationFile:
                 line = line.strip().strip("\n").strip("\t")
                 if len(line) > 0:
+                    # Check if line value has a dict entry
                     if mapping.get(line) is not None:
                         nextValue = line
                     elif nextValue != "":
+                        # Extract the integer out of the line
                         lineContent = line.replace("Spalte ", "").split(" ")
 
                         mapping.update({
@@ -140,20 +160,22 @@ class BoardHelper:
     @staticmethod
     def generateBoard(tile_codes, spareTile_code, startTile_column, endTile_column):
         """
+        Generates a Board object with the given codes and positions.
 
         Args:
-            endTile_column:
-            tile_codes:
-            spareTile_code:
-            startTile_column:
+            tile_codes (list[list[int]]): The encoded tile representation of the board.
+            spareTile_code (int): The encoded spare tile.
+            startTile_column (int): The column of the start tile
+            endTile_column (int): The column of the end tile
 
         Returns:
-
+            Board: A board with the given specifications.
         """
 
         from Board import Board
 
         tiles = []
+        # Go over every encoded tile, decode it and save it
         for r in tile_codes:
             column = []
             for tile_code in r:
@@ -165,14 +187,14 @@ class BoardHelper:
 
             tiles.append(column)
 
-        # get the sparetile
+        # get the spare tile
         spareTile = Tile(BoardHelper.reversedTileEncodings.get(spareTile_code))
 
         # Set the start and end positions
         start_tile_pos = (len(tiles) - 1, startTile_column)
         end_tile_pos = (0, endTile_column)
 
-        return Board(tiles=tiles, spareTile=spareTile, startTile_pos=start_tile_pos, endTile_pos=end_tile_pos)
+        return Board(tiles=tiles, spareTile=spareTile, startTilePos=start_tile_pos, endTilePos=end_tile_pos)
 
 
 def wrapInBorder(message) -> str:

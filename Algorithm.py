@@ -9,6 +9,14 @@ from Open import OpenHeap
 
 class Algorithm:
     def __init__(self, heuristic=None):
+        """
+        Represents the A* Algorithm.
+
+        Args:
+            heuristic (str or None): The optional heuristic to use for the algorithm. If this is None, it will choose
+                the defined heuristic.
+        """
+
         self._open = OpenHeap()  # also includes the f-score
         self._closed = set()
         self._successor = {}
@@ -18,17 +26,22 @@ class Algorithm:
 
     def h(self, node):
         """
-        Args:
-            node (Board):
+        Calculates the heuristic for the algorithm.
 
+        Args:
+            node (Board): The graph node containing board information
+
+        Returns:
+            float: The heuristic value.
         """
 
         player_pos = node.getPlayerPosition()
-        end_tile_pos = node.getEndTile()
+        end_tile_pos = node.getEndTilePosition()
 
         if self.heuristic is None:
             return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, 0.4, 0.6)
         else:
+            # Create partial methods for every heuristic
             heuristics = {
                 "euclid": partial(Heuristics.euclid, player_pos, end_tile_pos),
                 "euclid_int": partial(Heuristics.euclid_int, player_pos, end_tile_pos),
@@ -55,6 +68,7 @@ class Algorithm:
                 )
             }
 
+            # Weighted heuristics
             for i in range(1, 10):
                 float_i = i / 10
                 float_j = 1 - float_i
@@ -77,16 +91,26 @@ class Algorithm:
 
     def g(self, node_key) -> int:
         """
-        Cost of the shortest path to node
+        Returns the cost of the shortest path to the current node.
 
+        Args:
+            node_key: The key to the node
+
+        Returns:
+            int: The costs to the current node.
         """
 
         return self._g.get(node_key)
 
     def f(self, node):
         """
-        Custom cost function
+        Combines g(x) and h(x).
 
+        Args:
+            node (Board): The node to calculate the metric of
+
+        Returns:
+            int: The metric.
         """
 
         return self.g(node) + self.h(node)
@@ -119,6 +143,8 @@ class Algorithm:
         Args:
             starting_board(Board): The starting param.
 
+        Returns:
+            tuple[XX, int]: A tuple containing the path and count of open nodes.
         """
 
         starting_board_key = starting_board.generateKey()
@@ -190,7 +216,6 @@ class Algorithm:
 
     @staticmethod
     def expand_node(node, debug=False):
-
         """
         Expands a node, and returns all possible nodes (moves that could be played)
         This can either be a movement of the player or a movement of the param.

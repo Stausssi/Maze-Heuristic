@@ -1,13 +1,13 @@
 class Tile:
-    def __init__(self, connections, hasPlayer=False):
-        """
-        Represents a graphical Tile in the Board.
-        
-        Args:
-            connections (tuple[bool, bool, bool, bool): The connections of the tile. Order is: Top, Right, Bottom, Left.
-            hasPlayer (bool): Whether the player is standing on this Tile.
-        """
+    """
+    Represents a graphical Tile in the Board.
 
+    Args:
+        connections (tuple[bool, bool, bool, bool]): The connections of the tile. Order is: Top, Right, Bottom, Left.
+        hasPlayer (bool): Whether the player is standing on this Tile.
+    """
+
+    def __init__(self, connections, hasPlayer=False):
         if isinstance(connections, tuple):
             self.connections = connections
         else:
@@ -17,12 +17,14 @@ class Tile:
 
         self.hasPlayer = hasPlayer
 
+        # Create a list containing a character for every field in the 3x3 matrix
         self.representation = [
             [" ", " ", " "],
             [" ", " ", " "],
             [" ", " ", " "],
         ]
 
+        # Set the characters depending on the connections
         if self.topOpen:
             self.representation[0][1] = "\u2551"
 
@@ -40,7 +42,7 @@ class Tile:
         Creates the representation list.
 
         Returns:
-            list[list[str]]: The representation of the tile as a list of list of strings.
+            list[list[str]]: The representation of the tile as a list of a list of strings.
         """
 
         from util import BoardHelper
@@ -67,7 +69,8 @@ class Tile:
 
     def __str__(self):
         """
-        Returns: The string representation of the Tile.
+        Returns:
+            str: The string representation of the Tile.
         """
 
         return "\n".join([" ".join(line) for line in self.getRepresentation()])

@@ -1,29 +1,37 @@
 import random
 
 from Tile import Tile
-from util import BoardHelper, wrapInBorder
 
 
 class Board:
-    def __init__(self, tiles=None, spareTile=None, startTile_pos=None, endTile_pos=None):
+    """
+    Represents the board of the game.
 
-        if tiles is not None and spareTile is not None and startTile_pos is not None and endTile_pos is not None:
+    Args:
+        tiles: (list[list[Tile]] or None): The 2D list containing the tiles of the Board.
+            Or None, if you wish to use a random board.
+        spareTile (Tile): The spare tile in the beginning
+        startTilePos (tuple[int, int]): A tuple containing the row and column of the start tile
+        endTilePos (tuple[int, int]): A tuple containing the row and column of the end tile
+    """
+    def __init__(self, tiles=None, spareTile=None, startTilePos=None, endTilePos=None):
+        if tiles is not None and spareTile is not None and startTilePos is not None and endTilePos is not None:
             self._tiles = tiles
 
             # create a random spare tile
             self._spareTile = spareTile
 
             # Set the start and end
-            self._startTile_row = startTile_pos[0]
-            self._startTile_column = startTile_pos[1]
-            self._endTile_row = endTile_pos[0]
-            self._endTile_column = endTile_pos[1]
+            self._startTileRow = startTilePos[0]
+            self._startTileColumn = startTilePos[1]
+            self._endTileRow = endTilePos[0]
+            self._endTileColumn = endTilePos[1]
 
-            # the position of the player (tile) in the current param: (row, column)
-            self._player_column = self._startTile_column
-            self._player_row = self._startTile_row
+            # the position of the player (tile) in the current board: (row, column)
+            self._playerColumn = self._startTileColumn
+            self._playerRow = self._startTileRow
 
-            self.setPlayerPosition(self._startTile_column, self._startTile_row)
+            self.setPlayerPosition(self._startTileColumn, self._startTileRow)
         else:
             self._tiles = []
 
@@ -31,27 +39,39 @@ class Board:
             self._spareTile = None
 
             # Set the start and end
-            self._startTile_row = None
-            self._startTile_column = None
-            self._endTile_row = None
-            self._endTile_column = None
+            self._startTileRow = None
+            self._startTileColumn = None
+            self._endTileRow = None
+            self._endTileColumn = None
 
-            # the position of the player (tile) in the current param: (row, column)
-            self._player_column = None
-            self._player_row = None
+            # the position of the player (tile) in the current board: (row, column)
+            self._playerColumn = None
+            self._playerRow = None
 
     def initRandom(self):
+        """
+        Initialises the board with random tiles.
+
+        Returns:
+            None: Nothing
+        """
+
+        from util import BoardHelper
+
         self._tiles = []
         for r in range(5):
             column = []
             for c in range(4):
+                # Rotate the list of valid tiles
                 rotatedList = [BoardHelper.rotate(valid, random.randint(0, 3)) for valid in BoardHelper.validTiles]
+                # Select a random tile out of the list
                 column.append(
                     Tile(
                         tuple(rotatedList[random.randint(0, 2)])
                     )
                 )
 
+            # Save the column
             self._tiles.append(column)
 
         # create a random spare tile
@@ -60,27 +80,27 @@ class Board:
         )
 
         # Set the start and end
-        self._startTile_row = 4
-        self._startTile_column = 1
-        self._endTile_row = 0
-        self._endTile_column = 3
+        self._startTileRow = 4
+        self._startTileColumn = 1
+        self._endTileRow = 0
+        self._endTileColumn = 3
 
-        # the position of the player (tile) in the current param: (row, column)
-        self._player_column = 1
-        self._player_row = 4
+        # the position of the player (tile) in the current board: (row, column)
+        self._playerColumn = 1
+        self._playerRow = 4
 
-        self.setPlayerPosition(self._startTile_column, self._startTile_row)
+        self.setPlayerPosition(self._startTileColumn, self._startTileRow)
 
     def getAdjacentTile(self, position, relative_position):
         """
-        Get the tile that is left/right/top/bottom of a given tile, or None, if it is outside of the border.
+        Get the tile that is left/right/top/bottom of a given tile, or None, if it is outside the border.
 
         Args:
-            position (tuple[int, int]): Position of the current tile in the param
+            position (tuple[int, int]): Position of the current tile in the board
             relative_position (str): Position of tile relative to the given tile (right, left, top, bottom)
-        Returns:
-            tuple[Tile, tuple[int,int]]: The neighbouring tile and it´s position on the param
 
+        Returns:
+            tuple[Tile, tuple[int,int]]: The neighbouring tile and it´s position on the board
         """
 
         column = position[1]
@@ -126,7 +146,7 @@ class Board:
         closed_set = set()
 
         while len(open_set) != 0:
-            # copy the openset, so that it isn´t change during iteration
+            # copy the open set, so that it isn´t change during iteration
             open_set_copy = open_set.copy()
 
             for position in open_set_copy:
@@ -141,28 +161,36 @@ class Board:
 
                 # top
                 neighbour_tile, neighbour_position = self.getAdjacentTile(position, relative_position="top")
-                if neighbour_position is not None and neighbour_position not in open_set and neighbour_position not in closed_set:
+                if neighbour_position is not None \
+                        and neighbour_position not in open_set \
+                        and neighbour_position not in closed_set:
                     # check if tile can be walked to
                     if position_tile.topOpen and neighbour_tile.bottomOpen:
                         open_set.add(neighbour_position)
 
                 # bottom
                 neighbour_tile, neighbour_position = self.getAdjacentTile(position, relative_position="bottom")
-                if neighbour_position is not None and neighbour_position not in open_set and neighbour_position not in closed_set:
+                if neighbour_position is not None \
+                        and neighbour_position not in open_set \
+                        and neighbour_position not in closed_set:
                     # check if tile can be walked to
                     if position_tile.bottomOpen and neighbour_tile.topOpen:
                         open_set.add(neighbour_position)
 
                 # left
                 neighbour_tile, neighbour_position = self.getAdjacentTile(position, relative_position="left")
-                if neighbour_position is not None and neighbour_position not in open_set and neighbour_position not in closed_set:
+                if neighbour_position is not None \
+                        and neighbour_position not in open_set \
+                        and neighbour_position not in closed_set:
                     # check if tile can be walked to
                     if position_tile.leftOpen and neighbour_tile.rightOpen:
                         open_set.add(neighbour_position)
 
                 # right
                 neighbour_tile, neighbour_position = self.getAdjacentTile(position, relative_position="right")
-                if neighbour_position is not None and neighbour_position not in open_set and neighbour_position not in closed_set:
+                if neighbour_position is not None \
+                        and neighbour_position not in open_set \
+                        and neighbour_position not in closed_set:
                     # check if tile can be walked to
                     if position_tile.rightOpen and neighbour_tile.leftOpen:
                         open_set.add(neighbour_position)
@@ -171,7 +199,7 @@ class Board:
 
     def setPlayerPosition(self, column, row):
         """
-        Set the position of the player in the current param.
+        Set the position of the player in the current board.
 
         Args:
             column(int): Column
@@ -183,33 +211,34 @@ class Board:
         """
 
         # reset current tile
-        self._tiles[self._player_row][self._player_column].hasPlayer = False
+        self._tiles[self._playerRow][self._playerColumn].hasPlayer = False
 
-        # set new param position
-        self._player_column, self._player_row = column, row
+        # set new board position
+        self._playerColumn, self._playerRow = column, row
         self._tiles[row][column].hasPlayer = True
 
-    def did_player_win(self) -> bool:
+    def didPlayerWin(self):
         """
         Determines whether the player has won by checking whether he is on the endTile and the endTile has a connection
         to the top.
 
         Returns:
-            True, if the player stands of the top right tile and the top is open.
+            bool: True, if the player stands of the top right tile and the top is open.
         """
 
-        endTile = self.get_endTile()
+        endTile = self.getEndTile()
 
         return endTile.hasPlayer and endTile.topOpen
 
-    def get_endTile(self):
+    def getEndTile(self):
         """
+        Returns the end tile.
 
         Returns:
-            Tile: Endtile
+            Tile: The end tile
         """
 
-        return self._tiles[self._endTile_row][self._endTile_column]
+        return self._tiles[self._endTileRow][self._endTileColumn]
 
     def pushSpareTileIn(self, rowIndex):
         """
@@ -234,7 +263,7 @@ class Board:
                 tileRow.insert(0, self._spareTile)
                 outgoingTile = tileRow.pop(len(tileRow) - 1)
 
-            # if player is pushed out of the param, place him on the spareTile
+            # if player is pushed out of the board, place him on the spareTile
             if outgoingTile.hasPlayer:
                 self._spareTile.hasPlayer = True
                 outgoingTile.hasPlayer = False
@@ -246,8 +275,8 @@ class Board:
             for row in range(self.getSize()[0]):
                 for column in range(self.getSize()[1]):
                     if self._tiles[row][column].hasPlayer:
-                        self._player_row = row
-                        self._player_column = column
+                        self._playerRow = row
+                        self._playerColumn = column
                         return
 
         else:
@@ -255,48 +284,49 @@ class Board:
 
     def getPlayerPosition(self):
         """
-        Get the position of the current player on the param.
+        Get the position of the current player on the board.
 
         Returns:
             tuple[int, int]: Position (row, column) of the current player
 
         """
 
-        return self._player_row, self._player_column
+        return self._playerRow, self._playerColumn
 
     def getSize(self):
         """
-        Returns the number of rows and columns of the param: (rows, columns)
+        Returns the number of rows and columns of the board: (rows, columns)
 
         Returns:
-            tuple[int, int]: Number of rows and column of the param: (rows, columns)
+            tuple[int, int]: Number of rows and column of the board: (rows, columns)
 
         """
 
         return len(self._tiles), len(self._tiles[0])
 
-    def getEndTile(self):
+    def getEndTilePosition(self):
         """
+        Gets the position of the end tile.
 
         Returns:
-
+            tuple[int, int]: The row and column of the end tile.
         """
-        return self._endTile_row, self._endTile_column
+
+        return self._endTileRow, self._endTileColumn
 
     def generateKey(self):
         """
-        Generate a string for a dictionary, that encodes the whole information of the param, including the player
+        Generate a string for a dictionary, that encodes the whole information of the board, including the player
         position, all tiles and the spare tile.
 
-        The first (board_height * board_width) characters are tile codes for each tile of the param, from left to right
+        The first (board_height * board_width) characters are tile codes for each tile of the board, from left to right
         and from top to bottom. After that the code of the spare tile follows.
-        Finally the position of the player is encoded as follows:
+        Finally, the position of the player is encoded as follows:
             row column start
-        where start is either 0 or 1, depending on whether the player is not on the param yet
+        where start is either 0 or 1, depending on whether the player is not on the board yet
 
         Returns:
-            str: encoded String of the param
-
+            str: encoded String of the board
         """
 
         key = ""
@@ -310,17 +340,20 @@ class Board:
         key += str(self._spareTile.getTileCode())
 
         # encode the position of the player
-        key += str(self._player_row)
-        key += str(self._player_column)
+        key += str(self._playerRow)
+        key += str(self._playerColumn)
 
-        # todo: encode, if player is on param
+        # todo: encode, if player is on board
 
         return key
 
     def __str__(self):
         """
-        Returns: A string representing the param of tiles
+        Returns:
+            str: A string representing the board of tiles
         """
+
+        from util import wrapInBorder
 
         output = "Board:\n"
 
