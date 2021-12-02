@@ -41,6 +41,11 @@ def main():
         float_j = 1 - float_i
         heuristics.append(f"sum_shortest_distance_{float_i}_{float_j}")
 
+    for i in range(1, 10):
+        float_i = i / 10
+        float_j = 1 - float_i
+        heuristics.append(f"sum_shortest_distance_int_{float_i}_{float_j}")
+
     heuristics_values = {}
 
     boards = []
@@ -75,7 +80,7 @@ def main():
                 moves.append(len(path[0]))
                 openCount.append(path[1])
             else:
-                print(f"{heuristic} failed with Board {index}!")
+                print(f"{heuristic} failed with Board {index - removeCount}!")
                 # Remove board from boards
                 boards.pop(index - removeCount)
 

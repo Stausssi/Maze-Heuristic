@@ -63,6 +63,15 @@ class Algorithm:
                 )
             })
 
+        for i in range(1, 10):
+            float_i = i / 10
+            float_j = 1 - float_i
+            heuristics.update({
+                f"sum_shortest_distance_int_{float_i}_{float_j}": partial(
+                    Heuristics.sum_shortest_distance_and_euclid_int, node, player_pos, end_tile_pos, float_i, float_j
+                )
+            })
+
         return heuristics.get(self.heuristic)()
 
         # return Heuristics.euclid(player_pos, end_tile_pos)
