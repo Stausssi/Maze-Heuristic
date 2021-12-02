@@ -19,7 +19,7 @@ class Board:
             self._endTile_row = endTile_pos[0]
             self._endTile_column = endTile_pos[1]
 
-            # the position of the player (tile) in the current board: (row, column)
+            # the position of the player (tile) in the current param: (row, column)
             self._player_column = self._startTile_column
             self._player_row = self._startTile_row
 
@@ -36,7 +36,7 @@ class Board:
             self._endTile_row = None
             self._endTile_column = None
 
-            # the position of the player (tile) in the current board: (row, column)
+            # the position of the player (tile) in the current param: (row, column)
             self._player_column = None
             self._player_row = None
 
@@ -61,12 +61,12 @@ class Board:
 
         # Set the start and end
         self._startTile_row = 4
-        self._startTile_column = random.randint(0, 3)
+        self._startTile_column = 1
         self._endTile_row = 0
-        self._endTile_column = random.randint(0, 3)
+        self._endTile_column = 3
 
-        # the position of the player (tile) in the current board: (row, column)
-        self._player_column = random.randint(0, 3)
+        # the position of the player (tile) in the current param: (row, column)
+        self._player_column = 1
         self._player_row = 4
 
         self.setPlayerPosition(self._startTile_column, self._startTile_row)
@@ -76,10 +76,10 @@ class Board:
         Get the tile that is left/right/top/bottom of a given tile, or None, if it is outside of the border.
 
         Args:
-            position (tuple[int, int]): Position of the current tile in the board
+            position (tuple[int, int]): Position of the current tile in the param
             relative_position (str): Position of tile relative to the given tile (right, left, top, bottom)
         Returns:
-            tuple[Tile, tuple[int,int]]: The neighbouring tile and it´s position on the board
+            tuple[Tile, tuple[int,int]]: The neighbouring tile and it´s position on the param
 
         """
 
@@ -171,7 +171,7 @@ class Board:
 
     def setPlayerPosition(self, column, row):
         """
-        Set the position of the player in the current board.
+        Set the position of the player in the current param.
 
         Args:
             column(int): Column
@@ -185,7 +185,7 @@ class Board:
         # reset current tile
         self._tiles[self._player_row][self._player_column].hasPlayer = False
 
-        # set new board position
+        # set new param position
         self._player_column, self._player_row = column, row
         self._tiles[row][column].hasPlayer = True
 
@@ -234,7 +234,7 @@ class Board:
                 tileRow.insert(0, self._spareTile)
                 outgoingTile = tileRow.pop(len(tileRow) - 1)
 
-            # if player is pushed out of the board, place him on the spareTile
+            # if player is pushed out of the param, place him on the spareTile
             if outgoingTile.hasPlayer:
                 self._spareTile.hasPlayer = True
                 outgoingTile.hasPlayer = False
@@ -255,7 +255,7 @@ class Board:
 
     def getPlayerPosition(self):
         """
-        Get the position of the current player on the board.
+        Get the position of the current player on the param.
 
         Returns:
             tuple[int, int]: Position (row, column) of the current player
@@ -266,10 +266,10 @@ class Board:
 
     def getSize(self):
         """
-        Returns the number of rows and columns of the board: (rows, columns)
+        Returns the number of rows and columns of the param: (rows, columns)
 
         Returns:
-            tuple[int, int]: Number of rows and column of the board: (rows, columns)
+            tuple[int, int]: Number of rows and column of the param: (rows, columns)
 
         """
 
@@ -285,17 +285,17 @@ class Board:
 
     def generateKey(self):
         """
-        Generate a string for a dictionary, that encodes the whole information of the board, including the player
+        Generate a string for a dictionary, that encodes the whole information of the param, including the player
         position, all tiles and the spare tile.
 
-        The first (board_height * board_width) characters are tile codes for each tile of the board, from left to right
+        The first (board_height * board_width) characters are tile codes for each tile of the param, from left to right
         and from top to bottom. After that the code of the spare tile follows.
         Finally the position of the player is encoded as follows:
             row column start
-        where start is either 0 or 1, depending on whether the player is not on the board yet
+        where start is either 0 or 1, depending on whether the player is not on the param yet
 
         Returns:
-            str: encoded String of the board
+            str: encoded String of the param
 
         """
 
@@ -313,13 +313,13 @@ class Board:
         key += str(self._player_row)
         key += str(self._player_column)
 
-        # todo: encode, if player is on board
+        # todo: encode, if player is on param
 
         return key
 
     def __str__(self):
         """
-        Returns: A string representing the board of tiles
+        Returns: A string representing the param of tiles
         """
 
         output = "Board:\n"

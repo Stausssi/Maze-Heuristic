@@ -77,7 +77,7 @@ class BoardHelper:
     @staticmethod
     def readBoardFromCSV(path) -> Tuple[List[List[int]], int]:
         """
-        Reads a board from a given CSV and returns the tiles list and a spare tile
+        Reads a param from a given CSV and returns the tiles list and a spare tile
 
         Args:
             path (str): The path to the CSV file

@@ -1,18 +1,41 @@
+from multiprocessing import Pool
+
+import Algorithm
+import Heuristics
 from Algorithm import Algorithm
 from Board import Board
 from util import BoardHelper
 
 
-def evaluateBoard(board):
-    print(board)
-    alg = Algorithm()
+def evaluateBoard(param):
+    board, heuristic = param
+    # print(board)
+    alg = Algorithm(heuristic)
     path = alg.run(board)
-    print("Done with a board!")
+    # print("Done with a board!")
     return path
 
 
 def main():
-    paths = []
+    heuristics = [
+        "euclid", "euclid_int",
+        "manhattan", "manhattan_int",
+        "minkowski", "minkowski_int",
+        "chebyshev", "chebyshev_int",
+        "min_distance",
+        "shortest_distance", "shortest_distance_int",
+        "min_shortest_distance",
+        "sum_shortest_distance"
+    ]
+
+    for i in range(1, 10):
+        float_i = i / 10
+        float_j = 1 - float_i
+        heuristics.append(f"sum_shortest_distance_{float_i}_{float_j}")
+
+    heuristics_values = {}
+
+    boards = []
     # Evaluate 20 Boards in total
     # First, the two given boards
     # Then 18 random
@@ -21,17 +44,46 @@ def main():
         startColumn, endColumn = BoardHelper.readBoardInformation(f"data/info_{boardIndex}.txt")
         board = BoardHelper.generateBoard(field, spareTile, startColumn, endColumn)
 
-        paths.append(evaluateBoard(board))
+        boards.append(board)
+
+        # paths.append(evaluateBoard(param))
 
     for _ in range(18):
         board = Board()
         board.initRandom()
+        boards.append(board)
 
-        paths.append(evaluateBoard(board))
+        # paths.append(evaluateBoard(param))
 
-    # print(paths)
-    for index, path in enumerate(paths):
-        print(f"Solving Board {index + 1} took {len(path[0])} Moves with {path[1]} open")
+    for heuristic in heuristics:
+        print(f"Calculating with {heuristic}...")
+        params = [(board, heuristic) for board in boards]
+
+        with Pool(20) as threadPool:
+            paths = threadPool.map(evaluateBoard, params)
+
+        # print(f"---------- [{heuristic}] ----------")
+        moves = []
+        openCount = []
+        stopped = 0
+        for index, path in enumerate(paths):
+            if path[1] > 0:
+                moves.append(len(path[0]))
+                openCount.append(path[1])
+            else:
+                stopped += 1
+
+            # print(f"Solving Board {index + 1} took {len(path[0])} Moves with {path[1]} open")
+
+        avgMoves = sum(moves) / len(moves)
+        avgOpen = sum(openCount) / len(openCount)
+
+        heuristics_values.update({
+            heuristic: (avgMoves, avgOpen, stopped)
+        })
+        print(f"{heuristic} done!")
+
+    print(heuristics_values)
 
     # Heuristics.euclid: 1 --> 8 Moves (50k Open) mit distance.euclidean: 9 Moves (2.3k Open)
     # Heuristics.euclid: 2 --> 11 Moves (9k Open) mit distance.euclidean: 11 Moves (9k Open) --> oben falsche Werte (?)
@@ -141,11 +193,11 @@ def main():
     # field, spareTile = BoardHelper.readBoardFromCSV(f"data/puzzle_{boardIndex}.csv")
     # startColumn, endColumn = BoardHelper.readBoardInformation(f"data/info_{boardIndex}.txt")
     #
-    # board = BoardHelper.generateBoard(field, spareTile, startColumn, endColumn)
+    # param = BoardHelper.generateBoard(field, spareTile, startColumn, endColumn)
     #
-    # print(board)
+    # print(param)
     # alg = Algorithm()
-    # path = alg.run(board)
+    # path = alg.run(param)
     #
     # print(f"Took {len(path)} moves!")
     #

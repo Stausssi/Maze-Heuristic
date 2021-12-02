@@ -2,18 +2,23 @@ import copy
 
 from typing import List
 
+from cytoolz.functoolz import partial
+
 from Board import Board
 from Open import OpenHeap
 from Heuristics import Heuristics
 
+current_heuristic = ""
+
 
 class Algorithm:
-    def __init__(self):
+    def __init__(self, heuristic):
         self._open = OpenHeap()  # also includes the f-score
         self._closed = set()
         self._successor = {}
         self._g = {}
         self._nodes = {}
+        self.heuristic = heuristic
 
     def h(self, node):
         """
@@ -24,6 +29,45 @@ class Algorithm:
 
         player_pos = node.getPlayerPosition()
         end_tile_pos = node.getEndTile()
+
+        heuristics = {
+            "euclid": partial(Heuristics.euclid, player_pos, end_tile_pos),
+            "euclid_int": partial(Heuristics.euclid_int, player_pos, end_tile_pos),
+            "manhattan": partial(Heuristics.manhattan, player_pos, end_tile_pos),
+            "manhattan_int": partial(Heuristics.manhattan_int, player_pos, end_tile_pos),
+            "minkowski": partial(Heuristics.minkowski, player_pos, end_tile_pos),
+            "minkowski_int": partial(Heuristics.minkowski_int, player_pos, end_tile_pos),
+            "chebyshev": partial(Heuristics.chebyshev, player_pos, end_tile_pos),
+            "chebyshev_int": partial(Heuristics.chebyshev_int, player_pos, end_tile_pos),
+            "min_distance": partial(
+                Heuristics.min_distance_product,
+                node.get_reachable_positions(*player_pos),
+                node.get_reachable_positions(*end_tile_pos)
+            ),
+            "shortest_distance": partial(
+                Heuristics.shortest_distance_end_path_player_path, node, player_pos, end_tile_pos, False
+            ),
+            "shortest_distance_int": partial(
+                Heuristics.shortest_distance_end_path_player_path, node, player_pos, end_tile_pos
+            ),
+            "min_shortest_distance": partial(
+                Heuristics.min_shortest_distance_and_euclid, node, player_pos, end_tile_pos
+            ),
+            "sum_shortest_distance": partial(
+                Heuristics.sum_shortest_distance_and_euclid, node, player_pos, end_tile_pos
+            )
+        }
+
+        for i in range(1, 10):
+            float_i = i / 10
+            float_j = 1 - float_i
+            heuristics.update({
+                f"sum_shortest_distance_{float_i}_{float_j}": partial(
+                    Heuristics.sum_shortest_distance_and_euclid, node, player_pos, end_tile_pos, float_i, float_j
+                )
+            })
+
+        return heuristics.get(self.heuristic)()
 
         # return Heuristics.euclid(player_pos, end_tile_pos)
         # return Heuristics.shortest_distance_end_path_player_path(node, player_pos, end_tile_pos)
@@ -83,7 +127,7 @@ class Algorithm:
         Run the A star algorithm
 
         Args:
-            starting_board(Board): The starting board.
+            starting_board(Board): The starting param.
 
         """
 
@@ -112,8 +156,8 @@ class Algorithm:
             self._closed.add(minimal_node)
 
             # Stop after 25k open
-            if self._open.size() >= 15_000:
-                print("This board seems unsolvable")
+            if self._open.size() >= 25_000:
+                # print("This param seems unsolvable")
                 return [], -1
 
             # check for solution --> player on top right tile and tile _open on top
@@ -148,7 +192,7 @@ class Algorithm:
                         else:
                             self._open.push(expanded_node_key, f)
 
-                            # Save the node/board of the expanded key
+                            # Save the node/param of the expanded key
                             self._nodes[expanded_node_key] = expanded_node
 
             # delete minimal node object
@@ -159,7 +203,7 @@ class Algorithm:
 
         """
         Expands a node, and returns all possible nodes (moves that could be played)
-        This can either be a movement of the player or a movement of the board.
+        This can either be a movement of the player or a movement of the param.
 
         Args:
             node(Board) : The Node that should be expanded
@@ -182,7 +226,7 @@ class Algorithm:
             new_board.setPlayerPosition(column, row)
             walkable_boards.append(new_board)
 
-        # generate all permutations of the board by pushing a tile in
+        # generate all permutations of the param by pushing a tile in
         permutation_boards: List[Board] = []
         # push the spare tile in at every row
         for row_index in range(initial_board.getSize()[0]):
@@ -201,7 +245,7 @@ class Algorithm:
             for board in permutation_boards:
                 print(board)
 
-        # create keys for each board
+        # create keys for each param
         return [(board, board.generateKey()) for board in boards]
 
 
@@ -211,7 +255,7 @@ if __name__ == "__main__":
     test = Algorithm()
 
     board.setPlayerPosition(1, 4)
-    print("--------- initial board ------------")
+    print("--------- initial param ------------")
     print(board)
     boards = test.expand_node(board)
 
