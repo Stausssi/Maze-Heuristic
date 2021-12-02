@@ -24,6 +24,12 @@ def main():
     # Heuristics.chebyshev: 1 --> 9 Moves (2.6k Open)
     # Heuristics.chebyshev: 2 --> 11 Moves (10k Open)
 
+    # Heuristics.min_shortest_distance_and_euclid: 1 --> 8 Moves (11.3k Open)
+    # Heuristics.min_shortest_distance_and_euclid: 2 --> 10 Moves (7.5k Open)
+
+    # Heuristics.sum_shortest_distance_and_euclid: 1 --> 9 Moves (700 Open)
+    # Heuristics.sum_shortest_distance_and_euclid: 2 --> 11 Moves (8.7 Open)
+
     field, spareTile = BoardHelper.readBoardFromCSV(f"data/puzzle_{boardIndex}.csv")
     startColumn, endColumn = BoardHelper.readBoardInformation(f"data/info_{boardIndex}.txt")
 

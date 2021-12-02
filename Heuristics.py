@@ -48,6 +48,18 @@ class Heuristics:
 
         return HeuristicHelpers.min_distance_product(end_positions, player_positions)
 
+    @staticmethod
+    def min_shortest_distance_and_euclid(node, player_pos, end_tile_pos):
+        return min(
+            Heuristics.euclid(player_pos, end_tile_pos),
+            Heuristics.shortest_distance_end_path_player_path(node, player_pos, end_tile_pos)
+        )
+
+    @staticmethod
+    def sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos):
+        return Heuristics.euclid(player_pos, end_tile_pos) + \
+               Heuristics.shortest_distance_end_path_player_path(node, player_pos, end_tile_pos)
+
 
 class HeuristicHelpers:
     @staticmethod
