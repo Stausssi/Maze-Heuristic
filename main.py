@@ -1,4 +1,5 @@
 from multiprocessing import Pool
+from statistics import stdev
 
 import Algorithm
 from Algorithm import Algorithm
@@ -16,15 +17,16 @@ def evaluateBoard(param):
 
 
 def main():
+    board_count = 30
+
     heuristics = [
-        "euclid", "euclid_int",
-        "manhattan", "manhattan_int",
         "minkowski", "minkowski_int",
-        "chebyshev", "chebyshev_int",
-        "min_distance",
+        "euclid", "euclid_int",
+        "manhattan",
+        "chebyshev",
         "shortest_distance", "shortest_distance_int",
         "min_shortest_distance",
-        "sum_shortest_distance"
+        "sum_shortest_distance",
     ]
 
     for i in range(1, 10):
@@ -47,7 +49,7 @@ def main():
 
         # paths.append(evaluateBoard(param))
 
-    for _ in range(8):
+    for _ in range(board_count - 2):
         board = Board()
         board.initRandom()
         boards.append(board)
@@ -58,7 +60,7 @@ def main():
         print(f"Calculating with {heuristic}...")
         params = [(board, heuristic) for board in boards]
 
-        with Pool(20) as threadPool:
+        with Pool(board_count) as threadPool:
             paths = threadPool.map(evaluateBoard, params)
 
         # print(f"---------- [{heuristic}] ----------")
@@ -75,10 +77,12 @@ def main():
             # print(f"Solving Board {index + 1} took {len(path[0])} Moves with {path[1]} open")
 
         avgMoves = sum(moves) / len(moves)
+        stdMoves = stdev(moves)
         avgOpen = sum(openCount) / len(openCount)
+        stdOpen = stdev(openCount)
 
         heuristics_values.update({
-            heuristic: (avgMoves, avgOpen, stopped)
+            heuristic: (avgMoves, stdMoves, avgOpen, stdOpen, stopped)
         })
         print(f"{heuristic} done!")
 
@@ -204,6 +208,7 @@ def main():
     #     if node is not None:
     #         print(f"\n\n\n\n\n---------- [Step {step}] ----------\n")
     #         print(node)
+
 
 if __name__ == "__main__":
     main()

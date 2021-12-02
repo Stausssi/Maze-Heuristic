@@ -32,11 +32,9 @@ class Algorithm:
             "euclid": partial(Heuristics.euclid, player_pos, end_tile_pos),
             "euclid_int": partial(Heuristics.euclid_int, player_pos, end_tile_pos),
             "manhattan": partial(Heuristics.manhattan, player_pos, end_tile_pos),
-            "manhattan_int": partial(Heuristics.manhattan_int, player_pos, end_tile_pos),
-            "minkowski": partial(Heuristics.minkowski, player_pos, end_tile_pos),
-            "minkowski_int": partial(Heuristics.minkowski_int, player_pos, end_tile_pos),
+            "minkowski": partial(Heuristics.minkowski, player_pos, end_tile_pos, 3),
+            "minkowski_int": partial(Heuristics.minkowski_int, player_pos, end_tile_pos, 3),
             "chebyshev": partial(Heuristics.chebyshev, player_pos, end_tile_pos),
-            "chebyshev_int": partial(Heuristics.chebyshev_int, player_pos, end_tile_pos),
             "min_distance": partial(
                 Heuristics.min_distance_product,
                 node.get_reachable_positions(*player_pos),

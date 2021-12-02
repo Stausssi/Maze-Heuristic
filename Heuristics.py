@@ -17,14 +17,8 @@ class Heuristics:
         return distance.euclidean(player_pos, end_tile_pos)
 
     @staticmethod
-    def manhattan_int(player_pos, end_tile_pos):
-        return int(distance.cityblock(player_pos, end_tile_pos))
-        # return int(HeuristicHelpers.manhattan_dist(*player_pos, *end_tile_pos))
-
-    @staticmethod
     def manhattan(player_pos, end_tile_pos):
-        return distance.cityblock(player_pos, end_tile_pos)
-        # return int(HeuristicHelpers.manhattan_dist(*player_pos, *end_tile_pos))
+        return int(distance.cityblock(player_pos, end_tile_pos))
 
     @staticmethod
     def minkowski_int(player_pos, end_tile_pos, norm):
@@ -33,10 +27,6 @@ class Heuristics:
     @staticmethod
     def minkowski(player_pos, end_tile_pos, norm):
         return distance.minkowski(player_pos, end_tile_pos, p=norm)
-
-    @staticmethod
-    def chebyshev_int(player_pos, end_tile_pos):
-        return int(distance.chebyshev(player_pos, end_tile_pos))
 
     @staticmethod
     def chebyshev(player_pos, end_tile_pos):
