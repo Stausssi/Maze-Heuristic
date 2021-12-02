@@ -1,4 +1,7 @@
 from scipy.spatial import distance
+from decimal import Decimal, getcontext
+
+getcontext().prec = 2*1000
 
 
 class Heuristics:
@@ -46,7 +49,7 @@ class Heuristics:
         player_positions = node.get_reachable_positions(player_row, player_column)
         player_positions.add((player_row, player_column))
 
-        return HeuristicHelpers.min_distance_product(end_positions, player_positions)
+        return int(HeuristicHelpers.min_distance_product(end_positions, player_positions))
 
     @staticmethod
     def min_shortest_distance_and_euclid(node, player_pos, end_tile_pos):
@@ -59,6 +62,47 @@ class Heuristics:
     def sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, weight_euclid=1, weight_path=1):
         return int(Heuristics.euclid(player_pos, end_tile_pos) * weight_euclid + \
                Heuristics.shortest_distance_end_path_player_path(node, player_pos, end_tile_pos) * weight_path)
+
+    @staticmethod
+    def weighted_sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, weigth_path, weigth_euclid,
+                                                  isInt=True):
+
+        player_row, player_column = player_pos
+        endTile_row, endTile_column = end_tile_pos
+
+        end_positions = node.get_reachable_positions(endTile_row, endTile_column)
+        end_positions.add((endTile_row, endTile_column))
+
+        player_positions = node.get_reachable_positions(player_row, player_column)
+        player_positions.add((player_row, player_column))
+
+        min_dist = HeuristicHelpers.min_distance_product(end_positions, player_positions)
+        player_to_end = HeuristicHelpers.euclid_dist(player_row, player_column, endTile_row, endTile_column)
+
+        if isInt:
+            return int(min_dist * weigth_path + player_to_end * weigth_euclid)
+        else:
+            return min_dist * weigth_path + player_to_end * weigth_euclid
+
+    @staticmethod
+    def harmonic_mean(node, player_pos, end_tile_pos):
+
+        player_row, player_column = player_pos
+        endTile_row, endTile_column = end_tile_pos
+
+        end_positions = node.get_reachable_positions(endTile_row, endTile_column)
+        end_positions.add((endTile_row, endTile_column))
+
+        player_positions = node.get_reachable_positions(player_row, player_column)
+        player_positions.add((player_row, player_column))
+
+        min_dist = HeuristicHelpers.min_distance_product(end_positions, player_positions)
+        player_to_end = HeuristicHelpers.euclid_dist(player_row, player_column, endTile_row, endTile_column)
+
+        try:
+            return (min_dist * player_to_end) / (min_dist + player_to_end)
+        except ZeroDivisionError:
+            return 0
 
 
 class HeuristicHelpers:
@@ -93,7 +137,7 @@ class HeuristicHelpers:
 
         for x1, y1 in list1:
             for x2, y2 in list2:
-                distances.append(HeuristicHelpers.floor_euclid_dist(x1, y1, x2, y2))
+                distances.append(HeuristicHelpers.euclid_dist(x1, y1, x2, y2))
 
         return min(distances)
 

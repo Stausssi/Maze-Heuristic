@@ -101,6 +101,42 @@ def main():
     # Heuristics.sum_shortest_distance_and_euclid: 1 --> 8 Moves (12k Open)
     # Heuristics.sum_shortest_distance_and_euclid: 2 --> 11 Moves (21k Open)
 
+    # path and euclid equal
+
+    # isInt = True, weight_path= 0.5, euclid_path= 0.5, no individual cast
+    # Heuristics.weighted_sum_shortest_distance_and_euclid: 1 --> 8 Moves (3.3k Open)
+    # Heuristics.weighted_sum_shortest_distance_and_euclid: 2 --> 10 Moves (3.8k Open)
+
+    # isInt = False, weight_path= 0.5, euclid_path= 0.5, no individual cast
+    # Heuristics.weighted_sum_shortest_distance_and_euclid: 1 --> 8 Moves (1.6k Open)
+    # Heuristics.weighted_sum_shortest_distance_and_euclid: 2 --> 10 Moves (8.2k Open)
+
+    # weight euclid more than path
+
+    # isInt = True, weight_path= 0.7, euclid_path= 0.3, no individual cast
+    # Heuristics.weighted_sum_shortest_distance_and_euclid: 1 --> 8 Moves (7.8k Open)
+    # Heuristics.weighted_sum_shortest_distance_and_euclid: 2 --> 10 Moves (6.3k Open)
+    # --> not so good
+
+    # isInt = False, weight_path= 0.7, euclid_path= 0.3, no individual cast
+    # Heuristics.weighted_sum_shortest_distance_and_euclid: 1 --> 8 Moves (2.2k Open)
+    # Heuristics.weighted_sum_shortest_distance_and_euclid: 2 --> 10 Moves (4.0k Open)
+
+    # Heuristics.harmonic_mean: 1 --> 8 Moves (17k Open)
+    # Heuristics.harmonic_mean: 2 --> 12 Moves (15k Open)
+    # --> not good
+
+    # same with int
+    # Heuristics.harmonic_mean: 1 --> 8 Moves (17k Open)
+    # Heuristics.harmonic_mean: 2 --> 12 Moves (15k Open)
+    # --> not good
+
+    # Test: g = 2
+    # isInt = True, weight_path= 0.5, euclid_path= 0.5, no individual cast
+    # Heuristics.weighted_sum_shortest_distance_and_euclid: 1 --> 8 Moves (12kk Open)
+    # Heuristics.weighted_sum_shortest_distance_and_euclid: 2 --> stopped after 30k
+    # --> not good
+
     # boardIndex = 1
     # field, spareTile = BoardHelper.readBoardFromCSV(f"data/puzzle_{boardIndex}.csv")
     # startColumn, endColumn = BoardHelper.readBoardInformation(f"data/info_{boardIndex}.txt")
@@ -117,7 +153,6 @@ def main():
     #     if node is not None:
     #         print(f"\n\n\n\n\n---------- [Step {step}] ----------\n")
     #         print(node)
-
 
 if __name__ == "__main__":
     main()
