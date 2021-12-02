@@ -1,46 +1,37 @@
-open_list = minHeap()
-open_list.push(node=starting_board, f=0) # put start_node in openlist and set f=0
-g[starting_board] = 0 # set g_score
-predecessor[starting_board] = None
-
-while open_list.size() != 0:
-
-    # choose node from open_list with minimal f(x)
-    minimal_f, best_node = open_list.pop()
-
-    # and put it to closed_list
-    closed_list.add(best_node)
-
-    # check for solution
-    if nodes.get(best_node).did_player_win():
-        return reconstruct_path(best_node)
-
-    # expand all children of best_node
-    for child_node in expand_nodes(best_node):
-
-        # Only process node if it is not already in closed_list
-        if child_node not in closed_list:
-
-            # calculate the g value of the new node
-            g = g(best_node) + 1
-
-            # check if expanded node is in open
-            node_in_open = open_list.contains(child_node_key)
-
-            # Only process node if it is not in OPEN or it has a smaller g value than existing node
-            if not node_in_open or g < g(child_node_key):
-                # set successor of expanded node to best_node
-                predecessor[child_node_key] = best_node
-
-                # set g and f
-                g[child_node_key] = g
-                f = g + h(child_node)
-
-                # replace f value for the node, else push expanded node
-                if node_in_open:
-                    open_list.replace(child_node_key, f)
-                else:
-                    open_list.push(child_node_key, f)
-
-                    # Save the node/param of the expanded key
-                    nodes[child_node_key] = child_node
+01   # initialize variables
+02   open_heap = minHeap()
+03   closed_set = Set()
+04   # put start_node in open and set f=0
+05   open_heap.push(node=starting_board, f=0)
+06   g[starting_board] = 0 # set g_score
+07   predecessor[starting_board] = None
+08
+09   while open_heap.size() != 0:
+10       # choose node from open_heap with minimal f(x)
+11       minimal_f, best_node = open_heap.pop()
+12       # and put it to closed_list
+13       closed_list.add(best_node)
+14       # check for solution
+15       if nodes.get(best_node).did_player_win():
+16           return reconstruct_path(best_node)
+17       # expand all children of best_node
+18       for child_node in expand_nodes(best_node):
+19           # Only process node if it is not already in closed_list
+20           if child_node not in closed_list:
+21               # calculate the g value of the child_node
+22               g = g[best_node] + 1
+23               # check if child node is in open
+24               node_in_open = open_heap.contains(child_node)
+25               # Only process node if it is not in OPEN
+26               # or it has a smaller g value than existing node
+27               if not node_in_open or g < g[child_node]:
+28                   # set successor of child node to best_node
+29                   predecessor[child_node] = best_node
+30                   # set g and f
+31                   g[child_node] = g
+32                   f = g + h(child_node)
+33                   # replace f value for the node, else push child node
+34                   if node_in_open:
+35                       open_heap.replace(child_node, f)
+36                   else:
+37                       open_heap.push(child_node, f)
