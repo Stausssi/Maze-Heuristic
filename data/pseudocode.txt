@@ -1,0 +1,46 @@
+open_list = minHeap()
+open_list.push(node=starting_board, f=0) # put start_node in openlist and set f=0
+g[starting_board] = 0 # set g_score
+predecessor[starting_board] = None
+
+while open_list.size() != 0:
+
+    # choose node from open_list with minimal f(x)
+    minimal_f, best_node = open_list.pop()
+
+    # and put it to closed_list
+    closed_list.add(best_node)
+
+    # check for solution
+    if nodes.get(best_node).did_player_win():
+        return reconstruct_path(best_node)
+
+    # expand all children of best_node
+    for child_node in expand_nodes(best_node):
+
+        # Only process node if it is not already in closed_list
+        if child_node not in closed_list:
+
+            # calculate the g value of the new node
+            g = g(best_node) + 1
+
+            # check if expanded node is in open
+            node_in_open = open_list.contains(child_node_key)
+
+            # Only process node if it is not in OPEN or it has a smaller g value than existing node
+            if not node_in_open or g < g(child_node_key):
+                # set successor of expanded node to best_node
+                predecessor[child_node_key] = best_node
+
+                # set g and f
+                g[child_node_key] = g
+                f = g + h(child_node)
+
+                # replace f value for the node, else push expanded node
+                if node_in_open:
+                    open_list.replace(child_node_key, f)
+                else:
+                    open_list.push(child_node_key, f)
+
+                    # Save the node/param of the expanded key
+                    nodes[child_node_key] = child_node
