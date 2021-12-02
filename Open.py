@@ -1,5 +1,4 @@
 import heapq
-from Node import Node
 
 
 class OpenHeap:
