@@ -69,6 +69,7 @@ def main():
         # print(f"---------- [{heuristic}] ----------")
         moves = []
         openCount = []
+        removeCount = 0
         for index, path in enumerate(paths):
             if path[1] > 0:
                 moves.append(len(path[0]))
@@ -76,13 +77,15 @@ def main():
             else:
                 print(f"{heuristic} failed with Board {index}!")
                 # Remove board from boards
-                boards.pop(index)
+                boards.pop(index - removeCount)
 
                 # Remove previous entries of the board with previous heuristics
                 for prevMoves in allMoves:
-                    prevMoves.pop(index)
+                    prevMoves.pop(index - removeCount)
                 for prevOpenCounts in allOpen:
-                    prevOpenCounts.pop(index)
+                    prevOpenCounts.pop(index - removeCount)
+
+                removeCount += 1
 
         allMoves.append(moves)
         allOpen.append(openCount)
