@@ -48,7 +48,7 @@ def main():
 
         # paths.append(evaluateBoard(param))
 
-    for _ in range(18):
+    for _ in range(8):
         board = Board()
         board.initRandom()
         boards.append(board)
