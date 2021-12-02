@@ -60,11 +60,10 @@ def main():
         boards.append(board)
 
     # Remove all boards from the list, if manhattan can't complete them
-    paths = threadPoolCalc(boards, "manhattan")
-    for i, path in enumerate(paths):
-        if path[1] < 0:
-            print("Pop Board!")
-            boards.pop(i)
+    # paths = threadPoolCalc(boards, "manhattan")
+    # for i, path in enumerate(paths):
+    #     if path[1] < 0:
+    #         boards.pop(i)
 
     for heuristic in heuristics:
         print(f"Calculating with {heuristic}...")
@@ -73,13 +72,12 @@ def main():
         # print(f"---------- [{heuristic}] ----------")
         moves = []
         openCount = []
-        stopped = 0
         for index, path in enumerate(paths):
             if path[1] > 0:
                 moves.append(len(path[0]))
                 openCount.append(path[1])
             else:
-                stopped += 1
+                boards.pop(index)
 
             # print(f"Solving Board {index + 1} took {len(path[0])} Moves with {path[1]} open")
 
@@ -89,7 +87,7 @@ def main():
         stdOpen = stdev(openCount)
 
         heuristics_values.update({
-            heuristic: (avgMoves, stdMoves, avgOpen, stdOpen, stopped)
+            heuristic: (avgMoves, stdMoves, avgOpen, stdOpen)
         })
         print(f"{heuristic} done!")
 
