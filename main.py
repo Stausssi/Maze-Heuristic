@@ -29,6 +29,12 @@ def main():
 
     # Heuristics.sum_shortest_distance_and_euclid: 1 --> 9 Moves (700 Open)
     # Heuristics.sum_shortest_distance_and_euclid: 2 --> 11 Moves (8.7 Open)
+    # With euclid weight 2:
+    # Heuristics.sum_shortest_distance_and_euclid: 1 --> 9 Moves (800 Open)
+    # Heuristics.sum_shortest_distance_and_euclid: 2 --> 13 Moves (8k Open)
+    # With path weight 2:
+    # Heuristics.sum_shortest_distance_and_euclid: 1 --> 9 Moves (700 Open)
+    # Heuristics.sum_shortest_distance_and_euclid: 2 --> 12 Moves (650 Open)
 
     field, spareTile = BoardHelper.readBoardFromCSV(f"data/puzzle_{boardIndex}.csv")
     startColumn, endColumn = BoardHelper.readBoardInformation(f"data/info_{boardIndex}.txt")

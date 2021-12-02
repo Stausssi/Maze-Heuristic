@@ -32,7 +32,8 @@ class Algorithm:
         # return Heuristics.minkowski(player_pos, end_tile_pos, 3)
         # return Heuristics.chebyshev(player_pos, end_tile_pos)
         # return Heuristics.min_shortest_distance_and_euclid(node, player_pos, end_tile_pos)
-        return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos)
+        # return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos)
+        return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, weight_path=2)
 
     def g(self, node_key) -> int:
         """
