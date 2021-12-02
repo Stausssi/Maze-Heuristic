@@ -6,11 +6,9 @@ from Board import Board
 from Heuristics import Heuristics
 from Open import OpenHeap
 
-current_heuristic = ""
-
 
 class Algorithm:
-    def __init__(self, heuristic):
+    def __init__(self, heuristic=None):
         self._open = OpenHeap()  # also includes the f-score
         self._closed = set()
         self._successor = {}
@@ -28,67 +26,54 @@ class Algorithm:
         player_pos = node.getPlayerPosition()
         end_tile_pos = node.getEndTile()
 
-        heuristics = {
-            "euclid": partial(Heuristics.euclid, player_pos, end_tile_pos),
-            "euclid_int": partial(Heuristics.euclid_int, player_pos, end_tile_pos),
-            "manhattan": partial(Heuristics.manhattan, player_pos, end_tile_pos),
-            "minkowski": partial(Heuristics.minkowski, player_pos, end_tile_pos, 3),
-            "minkowski_int": partial(Heuristics.minkowski_int, player_pos, end_tile_pos, 3),
-            "chebyshev": partial(Heuristics.chebyshev, player_pos, end_tile_pos),
-            "min_distance": partial(
-                Heuristics.min_distance_product,
-                node.get_reachable_positions(*player_pos),
-                node.get_reachable_positions(*end_tile_pos)
-            ),
-            "shortest_distance": partial(
-                Heuristics.shortest_distance_end_path_player_path, node, player_pos, end_tile_pos, False
-            ),
-            "shortest_distance_int": partial(
-                Heuristics.shortest_distance_end_path_player_path, node, player_pos, end_tile_pos
-            ),
-            "min_shortest_distance": partial(
-                Heuristics.min_shortest_distance_and_euclid, node, player_pos, end_tile_pos
-            ),
-            "sum_shortest_distance": partial(
-                Heuristics.sum_shortest_distance_and_euclid, node, player_pos, end_tile_pos
-            )
-        }
-
-        for i in range(1, 10):
-            float_i = i / 10
-            float_j = 1 - float_i
-            heuristics.update({
-                f"sum_shortest_distance_{float_i}_{float_j}": partial(
-                    Heuristics.sum_shortest_distance_and_euclid, node, player_pos, end_tile_pos, float_i, float_j
+        if self.heuristic is None:
+            return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, 0.4, 0.6)
+        else:
+            heuristics = {
+                "euclid": partial(Heuristics.euclid, player_pos, end_tile_pos),
+                "euclid_int": partial(Heuristics.euclid_int, player_pos, end_tile_pos),
+                "manhattan": partial(Heuristics.manhattan, player_pos, end_tile_pos),
+                "minkowski": partial(Heuristics.minkowski, player_pos, end_tile_pos, 3),
+                "minkowski_int": partial(Heuristics.minkowski_int, player_pos, end_tile_pos, 3),
+                "chebyshev": partial(Heuristics.chebyshev, player_pos, end_tile_pos),
+                "min_distance": partial(
+                    Heuristics.min_distance_product,
+                    node.get_reachable_positions(*player_pos),
+                    node.get_reachable_positions(*end_tile_pos)
+                ),
+                "shortest_distance": partial(
+                    Heuristics.shortest_distance_end_path_player_path, node, player_pos, end_tile_pos, False
+                ),
+                "shortest_distance_int": partial(
+                    Heuristics.shortest_distance_end_path_player_path, node, player_pos, end_tile_pos
+                ),
+                "min_shortest_distance": partial(
+                    Heuristics.min_shortest_distance_and_euclid, node, player_pos, end_tile_pos
+                ),
+                "sum_shortest_distance": partial(
+                    Heuristics.sum_shortest_distance_and_euclid, node, player_pos, end_tile_pos
                 )
-            })
+            }
 
-        for i in range(1, 10):
-            float_i = i / 10
-            float_j = 1 - float_i
-            heuristics.update({
-                f"sum_shortest_distance_int_{float_i}_{float_j}": partial(
-                    Heuristics.sum_shortest_distance_and_euclid_int, node, player_pos, end_tile_pos, float_i, float_j
-                )
-            })
+            for i in range(1, 10):
+                float_i = i / 10
+                float_j = 1 - float_i
+                heuristics.update({
+                    f"sum_shortest_distance_{float_i}_{float_j}": partial(
+                        Heuristics.sum_shortest_distance_and_euclid, node, player_pos, end_tile_pos, float_i, float_j
+                    )
+                })
 
-        return heuristics.get(self.heuristic)()
+            for i in range(1, 10):
+                float_i = i / 10
+                float_j = 1 - float_i
+                heuristics.update({
+                    f"sum_shortest_distance_int_{float_i}_{float_j}": partial(
+                        Heuristics.sum_shortest_distance_and_euclid_int, node, player_pos, end_tile_pos, float_i, float_j
+                    )
+                })
 
-        # return Heuristics.euclid(player_pos, end_tile_pos)
-        # return Heuristics.shortest_distance_end_path_player_path(node, player_pos, end_tile_pos)
-        # return Heuristics.manhattan(player_pos, end_tile_pos)
-        # return Heuristics.minkowski(player_pos, end_tile_pos, 2)
-        # return Heuristics.minkowski(player_pos, end_tile_pos, 3)
-        # return Heuristics.chebyshev(player_pos, end_tile_pos)
-        # return Heuristics.min_shortest_distance_and_euclid(node, player_pos, end_tile_pos)
-        # return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos)
-        # return Heuristics.weighted_sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, 0.5, 0.5,isInt=True)
-        # return Heuristics.weighted_sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, 0.5, 0.5,isInt=False)
-        # return Heuristics.harmonic_mean(node, player_pos, end_tile_pos)
-        # return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, weight_path=2)
-        # return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, weight_euclid=0.5)
-        # return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, weight_path=0.5)
-        # return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, 0.6, 0.4)
+            return heuristics.get(self.heuristic)()
 
     def g(self, node_key) -> int:
         """
@@ -201,7 +186,7 @@ class Algorithm:
                             self._nodes[expanded_node_key] = expanded_node
 
             # delete minimal node object
-            del self._nodes[minimal_node]
+            # del self._nodes[minimal_node]
 
     @staticmethod
     def expand_node(node, debug=False):

@@ -1,6 +1,11 @@
 from decimal import getcontext
+from multiprocessing import Pool
+from statistics import stdev
 
 from scipy.spatial import distance
+
+from Board import Board
+from util import BoardHelper
 
 getcontext().prec = 2 * 1000
 
@@ -122,8 +127,110 @@ class Heuristics:
             return 0
 
 
-if __name__ == "__main__":
-    list1 = [(1, 2), (1, 1), (5, 2)]
-    list2 = [(3, 4), (2, 3)]
+def threadPoolCalc(boards, heuristic):
+    params = [(board, heuristic) for board in boards]
 
-    print(Heuristics.min_distance_product(list1, list2))
+    with Pool(len(boards)) as threadPool:
+        return threadPool.map(evaluateBoard, params)
+
+
+def evaluateBoard(param):
+    board, heuristic = param
+    print(board)
+    # print(board)
+    from Algorithm import Algorithm
+    alg = Algorithm(heuristic)
+    path = alg.run(board)
+    # print("Done with a board!")
+    return path
+
+
+def evaluate():
+    board_count = 30
+
+    heuristics = [
+        "minkowski", "minkowski_int",
+        "euclid", "euclid_int",
+        "manhattan",
+        "chebyshev",
+        "shortest_distance", "shortest_distance_int",
+        "min_shortest_distance",
+        "sum_shortest_distance",
+    ]
+
+    for i in range(1, 10):
+        float_i = i / 10
+        float_j = 1 - float_i
+        heuristics.append(f"sum_shortest_distance_{float_i}_{float_j}")
+    for i in range(1, 10):
+        float_i = i / 10
+        float_j = 1 - float_i
+        heuristics.append(f"sum_shortest_distance_int_{float_i}_{float_j}")
+
+    heuristics_values = {}
+    boards = []
+
+    # Evaluate 20 Boards in total
+    # First, the two given boards
+    # Then 18 random
+    for boardIndex in range(1, 3):
+        field, spareTile = BoardHelper.readBoardFromCSV(f"data/puzzle_{boardIndex}.csv")
+        startColumn, endColumn = BoardHelper.readBoardInformation(f"data/info_{boardIndex}.txt")
+        board = BoardHelper.generateBoard(field, spareTile, startColumn, endColumn)
+
+        boards.append(board)
+
+    for _ in range(board_count - 2):
+        board = Board()
+        board.initRandom()
+        boards.append(board)
+
+    allMoves = []
+    allOpen = []
+    for heuristic in heuristics:
+        print(f"Calculating with {heuristic}...")
+        paths = threadPoolCalc(boards, heuristic)
+
+        # print(f"---------- [{heuristic}] ----------")
+        moves = []
+        openCount = []
+        removeCount = 0
+        for index, path in enumerate(paths):
+            if path[1] > 0:
+                moves.append(len(path[0]))
+                openCount.append(path[1])
+            else:
+                print(f"{heuristic} failed with Board {index - removeCount}!")
+                # Remove board from boards
+                boards.pop(index - removeCount)
+
+                # Remove previous entries of the board with previous heuristics
+                for prevMoves in allMoves:
+                    prevMoves.pop(index - removeCount)
+                for prevOpenCounts in allOpen:
+                    prevOpenCounts.pop(index - removeCount)
+
+                removeCount += 1
+
+        allMoves.append(moves)
+        allOpen.append(openCount)
+        print(f"{heuristic} done!")
+
+    print(allMoves)
+    print(allOpen)
+
+    for heuristic, moves, openCount in zip(heuristics, allMoves, allOpen):
+        avgMoves = sum(moves) / len(moves)
+        stdMoves = stdev(moves)
+        avgOpen = sum(openCount) / len(openCount)
+        stdOpen = stdev(openCount)
+
+        heuristics_values.update({
+            heuristic: (avgMoves, stdMoves, avgOpen, stdOpen)
+        })
+
+    print(heuristics_values)
+
+
+if __name__ == "__main__":
+    evaluate()
