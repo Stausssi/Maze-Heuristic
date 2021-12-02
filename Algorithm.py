@@ -33,9 +33,12 @@ class Algorithm:
         # return Heuristics.chebyshev(player_pos, end_tile_pos)
         # return Heuristics.min_shortest_distance_and_euclid(node, player_pos, end_tile_pos)
         # return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos)
-        return Heuristics.weighted_sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, 0.5, 0.5,
-                                                                    isInt=True)
+        # return Heuristics.weighted_sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, 0.5, 0.5,isInt=True)
         # return Heuristics.harmonic_mean(node, player_pos, end_tile_pos)
+        # return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, weight_path=2)
+        # return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, weight_euclid=0.5)
+        # return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, weight_path=0.5)
+        return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, 0.4, 0.6)
 
     def g(self, node_key) -> int:
         """

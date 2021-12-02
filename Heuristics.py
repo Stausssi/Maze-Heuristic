@@ -59,9 +59,9 @@ class Heuristics:
         )
 
     @staticmethod
-    def sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos):
-        return Heuristics.euclid(player_pos, end_tile_pos) + \
-               Heuristics.shortest_distance_end_path_player_path(node, player_pos, end_tile_pos)
+    def sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, weight_euclid=1, weight_path=1):
+        return int(Heuristics.euclid(player_pos, end_tile_pos) * weight_euclid + \
+               Heuristics.shortest_distance_end_path_player_path(node, player_pos, end_tile_pos) * weight_path)
 
     @staticmethod
     def weighted_sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, weigth_path, weigth_euclid,
