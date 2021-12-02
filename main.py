@@ -1,9 +1,37 @@
 from Algorithm import Algorithm
+from Board import Board
 from util import BoardHelper
 
 
+def evaluateBoard(board):
+    print(board)
+    alg = Algorithm()
+    path = alg.run(board)
+    print("Done with a board!")
+    return path
+
+
 def main():
-    boardIndex = 2
+    paths = []
+    # Evaluate 20 Boards in total
+    # First, the two given boards
+    # Then 18 random
+    for boardIndex in range(1, 3):
+        field, spareTile = BoardHelper.readBoardFromCSV(f"data/puzzle_{boardIndex}.csv")
+        startColumn, endColumn = BoardHelper.readBoardInformation(f"data/info_{boardIndex}.txt")
+        board = BoardHelper.generateBoard(field, spareTile, startColumn, endColumn)
+
+        paths.append(evaluateBoard(board))
+
+    for _ in range(18):
+        board = Board()
+        board.initRandom()
+
+        paths.append(evaluateBoard(board))
+
+    # print(paths)
+    for index, path in enumerate(paths):
+        print(f"Solving Board {index + 1} took {len(path[0])} Moves with {path[1]} open")
 
     # Heuristics.euclid: 1 --> 8 Moves (50k Open) mit distance.euclidean: 9 Moves (2.3k Open)
     # Heuristics.euclid: 2 --> 11 Moves (9k Open) mit distance.euclidean: 11 Moves (9k Open) --> oben falsche Werte (?)
@@ -28,7 +56,7 @@ def main():
     # Heuristics.min_shortest_distance_and_euclid: 2 --> 10 Moves (7.5k Open)
 
     # Heuristics.sum_shortest_distance_and_euclid: 1 --> 9 Moves (700 Open)
-    # Heuristics.sum_shortest_distance_and_euclid: 2 --> 11 Moves (8.7 Open)
+    # Heuristics.sum_shortest_distance_and_euclid: 2 --> 11 Moves (8.7k Open)
     # With euclid weight 2:
     # Heuristics.sum_shortest_distance_and_euclid: 1 --> 9 Moves (800 Open)
     # Heuristics.sum_shortest_distance_and_euclid: 2 --> 13 Moves (8k Open)
@@ -69,22 +97,26 @@ def main():
     # With euclid weight 0.6, path weight: 0.4:
     # Heuristics.sum_shortest_distance_and_euclid: 1 --> 8 Moves (3.5k Open)
     # Heuristics.sum_shortest_distance_and_euclid: 2 --> 10 Moves (4.4k Open)
+    # With euclid weight 0.7, path weight: 0.3:
+    # Heuristics.sum_shortest_distance_and_euclid: 1 --> 8 Moves (12k Open)
+    # Heuristics.sum_shortest_distance_and_euclid: 2 --> 11 Moves (21k Open)
 
-    field, spareTile = BoardHelper.readBoardFromCSV(f"data/puzzle_{boardIndex}.csv")
-    startColumn, endColumn = BoardHelper.readBoardInformation(f"data/info_{boardIndex}.txt")
-
-    board = BoardHelper.generateBoard(field, spareTile, startColumn, endColumn)
-
-    print(board)
-    alg = Algorithm()
-    path = alg.run(board)
-
-    print(f"Took {len(path)} moves!")
-
-    for step, node in enumerate(path):
-        if node is not None:
-            print(f"\n\n\n\n\n---------- [Step {step}] ----------\n")
-            print(node)
+    # boardIndex = 1
+    # field, spareTile = BoardHelper.readBoardFromCSV(f"data/puzzle_{boardIndex}.csv")
+    # startColumn, endColumn = BoardHelper.readBoardInformation(f"data/info_{boardIndex}.txt")
+    #
+    # board = BoardHelper.generateBoard(field, spareTile, startColumn, endColumn)
+    #
+    # print(board)
+    # alg = Algorithm()
+    # path = alg.run(board)
+    #
+    # print(f"Took {len(path)} moves!")
+    #
+    # for step, node in enumerate(path):
+    #     if node is not None:
+    #         print(f"\n\n\n\n\n---------- [Step {step}] ----------\n")
+    #         print(node)
 
 
 if __name__ == "__main__":

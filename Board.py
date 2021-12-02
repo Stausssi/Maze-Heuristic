@@ -61,13 +61,15 @@ class Board:
 
         # Set the start and end
         self._startTile_row = 4
-        self._startTile_column = 1
+        self._startTile_column = random.randint(0, 3)
         self._endTile_row = 0
-        self._endTile_column = 3
+        self._endTile_column = random.randint(0, 3)
 
         # the position of the player (tile) in the current board: (row, column)
-        self._player_column = 1
+        self._player_column = random.randint(0, 3)
         self._player_row = 4
+
+        self.setPlayerPosition(self._startTile_column, self._startTile_row)
 
     def getAdjacentTile(self, position, relative_position):
         """

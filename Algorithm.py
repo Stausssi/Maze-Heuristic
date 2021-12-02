@@ -36,7 +36,7 @@ class Algorithm:
         # return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, weight_path=2)
         # return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, weight_euclid=0.5)
         # return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, weight_path=0.5)
-        return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, 0.4, 0.6)
+        return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, 0.6, 0.4)
 
     def g(self, node_key) -> int:
         """
@@ -100,7 +100,7 @@ class Algorithm:
 
         while self._open.isNotEmpty():
             # Logging
-            print(f"Open: {self._open.size()}, Closed: {len(self._closed)}")
+            # print(f"Open: {self._open.size()}, Closed: {len(self._closed)}")
 
             # choose node from _open with minimal f(x)
             minimal_f, minimal_node = self._open.pop_smallest()
@@ -109,10 +109,15 @@ class Algorithm:
             self._closed.add(minimal_node)
             # todo: Maybe delete node from "nodes" to save memory
 
+            # Stop after 25k open
+            if self._open.size() >= 15_000:
+                print("This board seems unsolvable")
+                return [], -1
+
             # check for solution --> player on top right tile and tile _open on top
             if self._nodes.get(minimal_node).did_player_win():
                 # return path
-                return self.reconstruct_path(minimal_node)
+                return self.reconstruct_path(minimal_node), self._open.size()
 
             # loop through all children of node with minimal f
             for expanded_node, expanded_node_key in self.expand_node(self._nodes.get(minimal_node)):
