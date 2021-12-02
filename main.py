@@ -32,9 +32,43 @@ def main():
     # With euclid weight 2:
     # Heuristics.sum_shortest_distance_and_euclid: 1 --> 9 Moves (800 Open)
     # Heuristics.sum_shortest_distance_and_euclid: 2 --> 13 Moves (8k Open)
+    # With euclid weight 0.5:
+    # Heuristics.sum_shortest_distance_and_euclid: 1 --> 8 Moves (1.8k Open)
+    # Heuristics.sum_shortest_distance_and_euclid: 2 --> 11 Moves (3.5k Open)
     # With path weight 2:
     # Heuristics.sum_shortest_distance_and_euclid: 1 --> 9 Moves (700 Open)
     # Heuristics.sum_shortest_distance_and_euclid: 2 --> 12 Moves (650 Open)
+    # With path weight 0.5:
+    # Heuristics.sum_shortest_distance_and_euclid: 1 --> 9 Moves (950 Open)
+    # Heuristics.sum_shortest_distance_and_euclid: 2 --> 12 Moves (6.3k Open)
+
+    # Without integer rounding
+    # With euclid weight 0.4, path weight: 0.6:
+    # Heuristics.sum_shortest_distance_and_euclid: 1 --> 8 Moves (2k Open)
+    # Heuristics.sum_shortest_distance_and_euclid: 2 --> 10 Moves (6.5k Open)
+    # With euclid weight 0.3, path weight: 0.7:
+    # Heuristics.sum_shortest_distance_and_euclid: 1 --> 8 Moves (3k Open)
+    # Heuristics.sum_shortest_distance_and_euclid: 2 --> 10 Moves (5.3k Open)
+    # With euclid weight 0.5, path weight: 0.5:
+    # Heuristics.sum_shortest_distance_and_euclid: 1 --> 8 Moves (1.7k Open)
+    # Heuristics.sum_shortest_distance_and_euclid: 2 --> 10 Moves (6.2k Open)
+    # With euclid weight 0.6, path weight: 0.4:
+    # Heuristics.sum_shortest_distance_and_euclid: 1 --> 8 Moves (1.6k Open)
+    # Heuristics.sum_shortest_distance_and_euclid: 2 --> 10 Moves (10k Open)
+
+    # With integer rounding
+    # With euclid weight 0.4, path weight: 0.6:
+    # Heuristics.sum_shortest_distance_and_euclid: 1 --> 8 Moves (7k Open)
+    # Heuristics.sum_shortest_distance_and_euclid: 2 --> 10 Moves (6.7k Open)
+    # With euclid weight 0.3, path weight: 0.7:
+    # Heuristics.sum_shortest_distance_and_euclid: 1 --> 8 Moves (10k Open)
+    # Heuristics.sum_shortest_distance_and_euclid: 2 --> 10 Moves (7.2k Open)
+    # With euclid weight 0.5, path weight: 0.5:
+    # Heuristics.sum_shortest_distance_and_euclid: 1 --> 8 Moves (3.5k Open)
+    # Heuristics.sum_shortest_distance_and_euclid: 2 --> 10 Moves (4.4k Open)
+    # With euclid weight 0.6, path weight: 0.4:
+    # Heuristics.sum_shortest_distance_and_euclid: 1 --> 8 Moves (3.5k Open)
+    # Heuristics.sum_shortest_distance_and_euclid: 2 --> 10 Moves (4.4k Open)
 
     field, spareTile = BoardHelper.readBoardFromCSV(f"data/puzzle_{boardIndex}.csv")
     startColumn, endColumn = BoardHelper.readBoardInformation(f"data/info_{boardIndex}.txt")
