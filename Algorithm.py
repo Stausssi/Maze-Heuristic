@@ -177,7 +177,7 @@ class Algorithm:
                 return [], -1
 
             # check for solution --> player on top right tile and tile _open on top
-            if self._nodes.get(minimal_node).did_player_win():
+            if self._nodes.get(minimal_node).didPlayerWin():
                 # return path
                 return self.reconstruct_path(minimal_node), self._open.size()
 
