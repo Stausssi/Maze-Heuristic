@@ -7,6 +7,13 @@ from Board import Board
 from util import BoardHelper
 
 
+def threadPoolCalc(boards, heuristic):
+    params = [(board, heuristic) for board in boards]
+
+    with Pool(len(boards)) as threadPool:
+        return threadPool.map(evaluateBoard, params)
+
+
 def evaluateBoard(param):
     board, heuristic = param
     # print(board)
@@ -47,21 +54,20 @@ def main():
 
         boards.append(board)
 
-        # paths.append(evaluateBoard(param))
-
     for _ in range(board_count - 2):
         board = Board()
         board.initRandom()
         boards.append(board)
 
-        # paths.append(evaluateBoard(param))
+    # Remove all boards from the list, if manhattan can't complete them
+    paths = threadPoolCalc(boards, "manhattan")
+    for i, path in enumerate(paths):
+        if path[1] < 0:
+            boards.pop(i)
 
     for heuristic in heuristics:
         print(f"Calculating with {heuristic}...")
-        params = [(board, heuristic) for board in boards]
-
-        with Pool(board_count) as threadPool:
-            paths = threadPool.map(evaluateBoard, params)
+        paths = threadPoolCalc(boards, heuristic)
 
         # print(f"---------- [{heuristic}] ----------")
         moves = []
