@@ -52,8 +52,7 @@ class Algorithm:
                 "chebyshev": partial(Heuristics.chebyshev, node, player_pos, end_tile_pos),
                 "min_distance": partial(
                     Heuristics.min_distance_product, node,
-                    node.get_reachable_positions(*player_pos),
-                    node.get_reachable_positions(*end_tile_pos)
+                    *Heuristics.createPlayerAndEndPaths(node, player_pos, end_tile_pos)
                 ),
                 "shortest_distance": partial(
                     Heuristics.shortest_distance_end_path_player_path, node, player_pos, end_tile_pos, False
