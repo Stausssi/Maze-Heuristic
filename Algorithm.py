@@ -40,7 +40,7 @@ class Algorithm:
         end_tile_pos = node.getEndTilePosition()
 
         if self.heuristic is None:
-            return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, 0.4, 0.6)
+            return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, 0.3, 0.7)
         else:
             # Create partial methods for every heuristic
             heuristics = {
