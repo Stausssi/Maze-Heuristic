@@ -1,4 +1,3 @@
-from decimal import getcontext
 from multiprocessing import Pool
 from statistics import stdev
 
@@ -6,8 +5,6 @@ from scipy.spatial import distance
 
 from Board import Board
 from util import BoardHelper
-
-getcontext().prec = 2 * 1000
 
 
 class Heuristics:
@@ -329,8 +326,6 @@ def evaluateBoard(param):
     """
 
     board, heuristic = param
-    print(board)
-    # print(board)
     from Algorithm import Algorithm
     alg = Algorithm(heuristic)
     path = alg.run(board)
