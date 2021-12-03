@@ -37,27 +37,21 @@ class Algorithm:
         """
 
         player_pos = node.getPlayerPosition()
-        print(player_pos)
-        if player_pos == (None, None):
-            start_row, start_column = node.getStartTilePosition()
-            player_pos = (start_row, start_column)
         end_tile_pos = node.getEndTilePosition()
-
-        # todo: Try doing that
 
         if self.heuristic is None:
             return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, 0.4, 0.6)
         else:
             # Create partial methods for every heuristic
             heuristics = {
-                "euclid": partial(Heuristics.euclid, player_pos, end_tile_pos),
-                "euclid_int": partial(Heuristics.euclid_int, player_pos, end_tile_pos),
-                "manhattan": partial(Heuristics.manhattan, player_pos, end_tile_pos),
-                "minkowski": partial(Heuristics.minkowski, player_pos, end_tile_pos, 3),
-                "minkowski_int": partial(Heuristics.minkowski_int, player_pos, end_tile_pos, 3),
-                "chebyshev": partial(Heuristics.chebyshev, player_pos, end_tile_pos),
+                "euclid": partial(Heuristics.euclid, node, player_pos, end_tile_pos),
+                "euclid_int": partial(Heuristics.euclid_int, node, player_pos, end_tile_pos),
+                "manhattan": partial(Heuristics.manhattan, node, player_pos, end_tile_pos),
+                "minkowski": partial(Heuristics.minkowski, node, player_pos, end_tile_pos, 3),
+                "minkowski_int": partial(Heuristics.minkowski_int, node, player_pos, end_tile_pos, 3),
+                "chebyshev": partial(Heuristics.chebyshev, node, player_pos, end_tile_pos),
                 "min_distance": partial(
-                    Heuristics.min_distance_product,
+                    Heuristics.min_distance_product, node,
                     node.get_reachable_positions(*player_pos),
                     node.get_reachable_positions(*end_tile_pos)
                 ),
