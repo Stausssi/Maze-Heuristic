@@ -11,6 +11,7 @@ class Heuristics:
     """
     Static class containing methods for different heuristics.
     """
+
     @staticmethod
     def replacePlayerPosition(node, player_pos):
         """
@@ -255,7 +256,7 @@ class Heuristics:
         Returns:
             float: The harmonic mean distance
         """
-        
+
         player_positions, end_positions = Heuristics.createPlayerAndEndPaths(node, player_pos, end_tile_pos)
 
         min_dist = Heuristics.min_distance_product(end_positions, player_positions)
@@ -345,11 +346,13 @@ def evaluate():
 
     # Create a list containing the heuristics
     heuristics = [
-        "minkowski", "minkowski_int",
+        "minkowski",
+        "minkowski_int",
         "euclid", "euclid_int",
         "manhattan",
         "chebyshev",
-        "shortest_distance", "shortest_distance_int",
+        "shortest_distance",
+        "shortest_distance_int",
         "min_shortest_distance",
         "sum_shortest_distance",
     ]

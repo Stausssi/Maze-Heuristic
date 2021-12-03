@@ -51,7 +51,7 @@ class Algorithm:
                 "minkowski_int": partial(Heuristics.minkowski_int, node, player_pos, end_tile_pos, 3),
                 "chebyshev": partial(Heuristics.chebyshev, node, player_pos, end_tile_pos),
                 "min_distance": partial(
-                    Heuristics.min_distance_product, node,
+                    Heuristics.min_distance_product,
                     *Heuristics.createPlayerAndEndPaths(node, player_pos, end_tile_pos)
                 ),
                 "shortest_distance": partial(
