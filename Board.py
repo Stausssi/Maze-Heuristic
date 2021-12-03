@@ -16,6 +16,8 @@ class Board:
     """
 
     def __init__(self, tiles=None, spareTile=None, startTilePos=None, endTilePos=None):
+        self.notOnBoard = True
+
         if tiles is not None and spareTile is not None and startTilePos is not None and endTilePos is not None:
             self._tiles = tiles
 
@@ -29,10 +31,8 @@ class Board:
             self._endTileColumn = endTilePos[1]
 
             # the position of the player (tile) in the current board: (row, column)
-            self._playerColumn = self._startTileColumn
-            self._playerRow = self._startTileRow
-
-            self.setPlayerPosition(self._startTileColumn, self._startTileRow)
+            self._playerColumn = None
+            self._playerRow = None
         else:
             self._tiles = []
 
@@ -215,6 +215,9 @@ class Board:
 
         """
 
+        if self.notOnBoard:
+            self.notOnBoard = False
+
         # reset current tile
         self._tiles[self._playerRow][self._playerColumn].hasPlayer = False
 
@@ -244,6 +247,16 @@ class Board:
         """
 
         return self._tiles[self._endTileRow][self._endTileColumn]
+
+    def getStartTile(self):
+        """
+        Return the start Tile.
+
+        Returns:
+            Tile: The start tile
+        """
+
+        return self._tiles[self._startTileRow][self._startTileColumn]
 
     def pushSpareTileIn(self, rowIndex):
         """
@@ -319,6 +332,16 @@ class Board:
 
         return self._endTileRow, self._endTileColumn
 
+    def getStartTilePosition(self):
+        """
+        Gets the position of the start tile.
+
+        Returns:
+            tuple[int, int]: The row and column of the start tile.
+        """
+
+        return self._startTileRow, self._startTileColumn
+
     def generateKey(self):
         """
         Generate a string for a dictionary, that encodes the whole information of the board, including the player
@@ -347,8 +370,6 @@ class Board:
         # encode the position of the player
         key += str(self._playerRow)
         key += str(self._playerColumn)
-
-        # todo: encode, if player is on board
 
         return key
 

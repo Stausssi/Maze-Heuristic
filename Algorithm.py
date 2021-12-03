@@ -37,7 +37,13 @@ class Algorithm:
         """
 
         player_pos = node.getPlayerPosition()
+        print(player_pos)
+        if player_pos == (None, None):
+            start_row, start_column = node.getStartTilePosition()
+            player_pos = (start_row, start_column)
         end_tile_pos = node.getEndTilePosition()
+
+        # todo: Try doing that
 
         if self.heuristic is None:
             return Heuristics.sum_shortest_distance_and_euclid(node, player_pos, end_tile_pos, 0.4, 0.6)
@@ -223,14 +229,24 @@ class Algorithm:
 
         initial_board = copy.deepcopy(node)
 
-        # calculate positions, the player could move to
-        player_row, player_col = initial_board.getPlayerPosition()
-        player_positions = initial_board.get_reachable_positions(player_row, player_col)
+        start_tile = initial_board.getStartTile()
+        if initial_board.notOnBoard:
+            if start_tile.bottomOpen:
+                row, col = initial_board.getStartTilePosition()
+                player_positions = initial_board.get_reachable_positions(row, col)
+                player_positions.add((row, col))
+            else:
+                player_positions = set()
+        else:
+            # player is on the board
+            player_row, player_col = initial_board.getPlayerPosition()
+            player_positions = initial_board.get_reachable_positions(player_row, player_col)
 
         # generate boards, where the player is at those positions
         walkable_boards: List[Board] = []
         for row, column in player_positions:
             new_board = copy.deepcopy(initial_board)
+            print(f"pp: {row, column}")
             new_board.setPlayerPosition(column, row)
             walkable_boards.append(new_board)
 
