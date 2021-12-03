@@ -346,13 +346,11 @@ def evaluate():
 
     # Create a list containing the heuristics
     heuristics = [
-        "minkowski",
-        "minkowski_int",
+        "minkowski", "minkowski_int",
         "euclid", "euclid_int",
         "manhattan",
         "chebyshev",
-        "shortest_distance",
-        "shortest_distance_int",
+        "shortest_distance", "shortest_distance_int",
         "min_shortest_distance",
         "sum_shortest_distance",
     ]
@@ -366,6 +364,7 @@ def evaluate():
         float_i = i / 10
         float_j = 1 - float_i
         heuristics.append(f"sum_shortest_distance_int_{float_i}_{float_j}")
+
     # Evaluate 30 Boards in total
     # First, the two given boards
     # Then 28 random
