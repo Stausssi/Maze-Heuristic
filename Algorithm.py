@@ -83,7 +83,8 @@ class Algorithm:
                 float_j = 1 - float_i
                 heuristics.update({
                     f"sum_shortest_distance_int_{float_i}_{float_j}": partial(
-                        Heuristics.sum_shortest_distance_and_euclid_int, node, player_pos, end_tile_pos, float_i, float_j
+                        Heuristics.sum_shortest_distance_and_euclid_int,
+                        node, player_pos, end_tile_pos, float_i, float_j
                     )
                 })
 
@@ -152,7 +153,7 @@ class Algorithm:
 
         # initialize start node
 
-        # put start_node in openlist and calculate f = g(s) + h(s) = 0 + h(s)
+        # put start_node in open list and calculate f = g(s) + h(s) = 0 + h(s)
         self._open.push(node=starting_board_key, f=self.h(starting_board))
 
         # set g_score
@@ -193,7 +194,7 @@ class Algorithm:
                     # check if expanded node is in open
                     node_in_open = self._open.contains(expanded_node_key)
 
-                    # Only process node if it is not in OPEN or it has a smaller g value than existing node
+                    # Only process node if it is not in OPEN, or it has a smaller g value than existing node
                     if not node_in_open or g < self.g(expanded_node_key):
                         # set successor of expanded node to minimal_node
                         self._successor[expanded_node_key] = minimal_node
@@ -221,7 +222,7 @@ class Algorithm:
         This can either be a movement of the player or a movement of the param.
 
         Args:
-            node(Board) : The Node that should be expanded
+            node (Board) : The Node that should be expanded
             debug (bool): True if the resulting boards should be printed
 
         Returns:
@@ -264,7 +265,7 @@ class Algorithm:
         return [(board, board.generateKey()) for board in boards]
 
 
-if __name__ == "__main__":
+def algo_main():
     board = Board()
 
     test = Algorithm()
@@ -278,3 +279,7 @@ if __name__ == "__main__":
     for board, key in boards:
         print(key)
         print(board)
+
+
+if __name__ == "__main__":
+    algo_main()

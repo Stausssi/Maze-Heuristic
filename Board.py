@@ -14,6 +14,7 @@ class Board:
         startTilePos (tuple[int, int]): A tuple containing the row and column of the start tile
         endTilePos (tuple[int, int]): A tuple containing the row and column of the end tile
     """
+
     def __init__(self, tiles=None, spareTile=None, startTilePos=None, endTilePos=None):
         if tiles is not None and spareTile is not None and startTilePos is not None and endTilePos is not None:
             self._tiles = tiles
@@ -76,7 +77,11 @@ class Board:
 
         # create a random spare tile
         self._spareTile = Tile(
-            [BoardHelper.rotate(valid, random.randint(0, 3)) for valid in BoardHelper.validTiles][random.randint(0, 2)]
+            tuple(
+                [
+                    BoardHelper.rotate(valid, random.randint(0, 3)) for valid in BoardHelper.validTiles
+                ][random.randint(0, 2)]
+            )
         )
 
         # Set the start and end

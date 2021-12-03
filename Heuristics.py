@@ -110,13 +110,14 @@ class Heuristics:
     @staticmethod
     def min_distance_product(list1, list2):
         """
+        Calculates the minimum distance between any points in the given two lists.
 
         Args:
-            list1:
-            list2:
+            list1 (list[tuple[int, int]]): The first list of positions
+            list2 (list[tuple[int, int]]): The second list of positions
 
         Returns:
-
+            float: The minimum distance
         """
 
         list1 = list(list1)
@@ -133,24 +134,19 @@ class Heuristics:
     @staticmethod
     def shortest_distance_end_path_player_path(node, player_pos, end_tile_pos, isInt=True):
         """
+        Calculates the minimum distance between the path the player can walk on and the path starting from the end tile.
 
         Args:
-            node:
+            node (Board): The graph node of the current board state.
             player_pos (tuple[int, int]): The position of the player.
             end_tile_pos (tuple[int, int]): The position of the end tile.
+            isInt (bool): Whether to floor the number and return an integer
 
         Returns:
-
+            float: The minimal distance between both paths
         """
 
-        player_row, player_column = player_pos
-        endTile_row, endTile_column = end_tile_pos
-
-        end_positions = node.get_reachable_positions(endTile_row, endTile_column)
-        end_positions.add((endTile_row, endTile_column))
-
-        player_positions = node.get_reachable_positions(player_row, player_column)
-        player_positions.add((player_row, player_column))
+        player_positions, end_positions = Heuristics.createPlayerAndEndPaths(node, player_pos, end_tile_pos)
 
         if isInt:
             return int(Heuristics.min_distance_product(end_positions, player_positions))
@@ -172,7 +168,7 @@ class Heuristics:
         """
 
         return min(
-            Heuristics.euclid_int(player_pos, end_tile_pos),
+            Heuristics.euclid(player_pos, end_tile_pos),
             Heuristics.shortest_distance_end_path_player_path(node, player_pos, end_tile_pos)
         )
 
@@ -219,6 +215,42 @@ class Heuristics:
 
     @staticmethod
     def harmonic_mean(node, player_pos, end_tile_pos):
+        """
+        Calculates the harmonic mean distance between the paths of the player and the paths to the end.
+
+        Args:
+            node (Board): The graph node of the current board state.
+            player_pos (tuple[int, int]): The position of the player.
+            end_tile_pos (tuple[int, int]): The position of the end tile.
+
+        Returns:
+            float: The harmonic mean distance
+        """
+        
+        player_positions, end_positions = Heuristics.createPlayerAndEndPaths(node, player_pos, end_tile_pos)
+
+        min_dist = Heuristics.min_distance_product(end_positions, player_positions)
+        player_to_end = Heuristics.euclid(end_positions, player_positions)
+
+        try:
+            return (min_dist * player_to_end) / (min_dist + player_to_end)
+        except ZeroDivisionError:
+            return 0
+
+    @staticmethod
+    def createPlayerAndEndPaths(node, player_pos, end_tile_pos):
+        """
+        Creates the walkable paths starting from the player and the finish each.
+
+        Args:
+            node (Board): The graph node of the current board.
+            player_pos (tuple[int, int]): The position of the player
+            end_tile_pos (tuple[int, int]): The position of the end tile
+
+        Returns:
+            tuple[set[tuple[int, int]], set[tuple[int, int]]]: A tuple of sets containing a row column tuple for every
+                reachable position
+        """
 
         player_row, player_column = player_pos
         endTile_row, endTile_column = end_tile_pos
@@ -229,13 +261,7 @@ class Heuristics:
         player_positions = node.get_reachable_positions(player_row, player_column)
         player_positions.add((player_row, player_column))
 
-        min_dist = Heuristics.min_distance_product(end_positions, player_positions)
-        player_to_end = Heuristics.euclid(end_positions, player_positions)
-
-        try:
-            return (min_dist * player_to_end) / (min_dist + player_to_end)
-        except ZeroDivisionError:
-            return 0
+        return player_positions, end_positions
 
 
 def threadPoolCalc(boards, heuristic):
