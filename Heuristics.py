@@ -14,13 +14,32 @@ class Heuristics:
     """
     Static class containing methods for different heuristics.
     """
+    @staticmethod
+    def replacePlayerPosition(node, player_pos):
+        """
+        Replaces the player position if the player is not on the baord yet.
+
+        Args:
+            node (Board): The graph node of the current board state.
+            player_pos (tuple[int, int]): The position of the player.
+
+        Returns:
+            tuple[int, int]: The replaced position
+        """
+
+        if player_pos == (None, None):
+            row, column = node.getStartTilePosition()
+            return row + 1, column
+        else:
+            return player_pos
 
     @staticmethod
-    def euclid_int(player_pos, end_tile_pos):
+    def euclid_int(node, player_pos, end_tile_pos):
         """
         Calculates the euclidean distance between two given positions and floors it.
 
         Args:
+            node (Board): The graph node of the current board state.
             player_pos (tuple[int, int]): The position of the player.
             end_tile_pos (tuple[int, int]): The position of the end tile.
 
@@ -28,14 +47,15 @@ class Heuristics:
             int: The euclidean distance
         """
 
-        return int(distance.euclidean(player_pos, end_tile_pos))
+        return int(Heuristics.euclid(node, player_pos, end_tile_pos))
 
     @staticmethod
-    def euclid(player_pos, end_tile_pos):
+    def euclid(node, player_pos, end_tile_pos):
         """
         Calculates the euclidean distance between two given positions.
 
         Args:
+            node (Board): The graph node of the current board state.
             player_pos (tuple[int, int]): The position of the player.
             end_tile_pos (tuple[int, int]): The position of the end tile.
 
@@ -43,14 +63,17 @@ class Heuristics:
             float: The euclidean distance
         """
 
+        player_pos = Heuristics.replacePlayerPosition(node, player_pos)
+
         return distance.euclidean(player_pos, end_tile_pos)
 
     @staticmethod
-    def manhattan(player_pos, end_tile_pos):
+    def manhattan(node, player_pos, end_tile_pos):
         """
         Calculates the manhattan distance between two given positions.
 
         Args:
+            node (Board): The graph node of the current board state.
             player_pos (tuple[int, int]): The position of the player.
             end_tile_pos (tuple[int, int]): The position of the end tile.
 
@@ -58,14 +81,17 @@ class Heuristics:
             int: The manhattan distance
         """
 
+        player_pos = Heuristics.replacePlayerPosition(node, player_pos)
+
         return int(distance.cityblock(player_pos, end_tile_pos))
 
     @staticmethod
-    def minkowski_int(player_pos, end_tile_pos, norm):
+    def minkowski_int(node, player_pos, end_tile_pos, norm):
         """
         Calculates the minkowski distance between two given positions and floors it.
 
         Args:
+            node (Board): The graph node of the current board state.
             player_pos (tuple[int, int]): The position of the player.
             end_tile_pos (tuple[int, int]): The position of the end tile.
             norm (int): The norm of the minkowski distance. 1 = manhattan, 2 = euclidean
@@ -74,14 +100,15 @@ class Heuristics:
             int: The floored minkowski distance
         """
 
-        return int(distance.minkowski(player_pos, end_tile_pos, p=norm))
+        return int(Heuristics.minkowski(node, player_pos, end_tile_pos, norm))
 
     @staticmethod
-    def minkowski(player_pos, end_tile_pos, norm):
+    def minkowski(node, player_pos, end_tile_pos, norm):
         """
         Calculates the minkowski distance between two given positions.
 
         Args:
+            node (Board): The graph node of the current board state.
             player_pos (tuple[int, int]): The position of the player.
             end_tile_pos (tuple[int, int]): The position of the end tile.
             norm (int): The norm of the minkowski distance. 1 = manhattan, 2 = euclidean
@@ -90,20 +117,25 @@ class Heuristics:
             float: The minkowski distance
         """
 
+        player_pos = Heuristics.replacePlayerPosition(node, player_pos)
+
         return distance.minkowski(player_pos, end_tile_pos, p=norm)
 
     @staticmethod
-    def chebyshev(player_pos, end_tile_pos):
+    def chebyshev(node, player_pos, end_tile_pos):
         """
         Calculates the chebyshev distance between two given positions.
 
         Args:
+            node (Board): The graph node of the current board state.
             player_pos (tuple[int, int]): The position of the player.
             end_tile_pos (tuple[int, int]): The position of the end tile.
 
         Returns:
             int: The chebyshev distance
         """
+
+        player_pos = Heuristics.replacePlayerPosition(node, player_pos)
 
         return distance.chebyshev(player_pos, end_tile_pos)
 
@@ -127,7 +159,7 @@ class Heuristics:
 
         for point1 in list1:
             for point2 in list2:
-                distances.append(Heuristics.euclid(point1, point2))
+                distances.append(distance.euclidean(point1, point2))
 
         return min(distances)
 
@@ -168,7 +200,7 @@ class Heuristics:
         """
 
         return min(
-            Heuristics.euclid(player_pos, end_tile_pos),
+            Heuristics.euclid(node, player_pos, end_tile_pos),
             Heuristics.shortest_distance_end_path_player_path(node, player_pos, end_tile_pos)
         )
 
@@ -189,7 +221,7 @@ class Heuristics:
         """
 
         return int(
-            Heuristics.euclid(player_pos, end_tile_pos) * weight_euclid +
+            Heuristics.euclid(node, player_pos, end_tile_pos) * weight_euclid +
             Heuristics.shortest_distance_end_path_player_path(node, player_pos, end_tile_pos, isInt=False) * weight_path
         )
 
@@ -210,7 +242,7 @@ class Heuristics:
         """
 
         return \
-            Heuristics.euclid(player_pos, end_tile_pos) * weight_euclid + \
+            Heuristics.euclid(node, player_pos, end_tile_pos) * weight_euclid + \
             Heuristics.shortest_distance_end_path_player_path(node, player_pos, end_tile_pos, isInt=False) * weight_path
 
     @staticmethod
@@ -230,7 +262,7 @@ class Heuristics:
         player_positions, end_positions = Heuristics.createPlayerAndEndPaths(node, player_pos, end_tile_pos)
 
         min_dist = Heuristics.min_distance_product(end_positions, player_positions)
-        player_to_end = Heuristics.euclid(end_positions, player_positions)
+        player_to_end = Heuristics.euclid(node, end_positions, player_positions)
 
         try:
             return (min_dist * player_to_end) / (min_dist + player_to_end)
@@ -251,6 +283,9 @@ class Heuristics:
             tuple[set[tuple[int, int]], set[tuple[int, int]]]: A tuple of sets containing a row column tuple for every
                 reachable position
         """
+
+        if player_pos == (None, None):
+            player_pos = node.getStartTilePosition()
 
         player_row, player_column = player_pos
         endTile_row, endTile_column = end_tile_pos

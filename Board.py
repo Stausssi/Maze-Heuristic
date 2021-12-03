@@ -217,9 +217,9 @@ class Board:
 
         if self.notOnBoard:
             self.notOnBoard = False
-
-        # reset current tile
-        self._tiles[self._playerRow][self._playerColumn].hasPlayer = False
+        else:
+            # reset current tile
+            self._tiles[self._playerRow][self._playerColumn].hasPlayer = False
 
         # set new board position
         self._playerColumn, self._playerRow = column, row

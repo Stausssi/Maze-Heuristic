@@ -240,7 +240,7 @@ class Algorithm:
         walkable_boards: List[Board] = []
         for row, column in player_positions:
             new_board = copy.deepcopy(initial_board)
-            print(f"pp: {row, column}")
+            # print(f"pp: {row, column}")
             new_board.setPlayerPosition(column, row)
             walkable_boards.append(new_board)
 
