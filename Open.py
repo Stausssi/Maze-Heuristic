@@ -26,7 +26,7 @@ class OpenHeap:
 
         heapq.heappush(self._nodes, (f, node))
 
-    def pop_smallest(self):
+    def pop(self):
         """
         Removes the smallest element of the heap and returns it.
 

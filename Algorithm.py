@@ -19,14 +19,15 @@ class Algorithm:
 
         self._open = OpenHeap()  # also includes the f-score
         self._closed = set()
-        self._successor = {}
+        self._predecessor = {}
         self._g = {}
         self._nodes = {}
         self.heuristic = heuristic
 
     def h(self, node):
         """
-        Calculates the heuristic for the algorithm.
+        Calculates the heuristic for the algorithm. It is possible, to select many different heuristics for evaluation.s
+        The standard heuristic is Heuristics.sum_shortest_distance_and_euclid with weighs 0.4 and 0.6.
 
         Args:
             node (Board): The graph node containing board information
@@ -129,11 +130,11 @@ class Algorithm:
         """
 
         moves = [self._nodes[node_key]]
-        successor_key = node_key
+        predecessor_key = node_key
 
-        while successor_key is not None:
-            successor_key = self._successor[successor_key]
-            moves.insert(0, self._nodes.get(successor_key))
+        while predecessor_key is not None:
+            predecessor_key = self._predecessor[predecessor_key]
+            moves.insert(0, self._nodes.get(predecessor_key))
 
         return moves
 
@@ -142,78 +143,69 @@ class Algorithm:
         Run the A star algorithm
 
         Args:
-            starting_board(Board): The starting param.
+            starting_board(Board): The starting board.
 
         Returns:
             tuple[XX, int]: A tuple containing the path and count of open nodes.
         """
 
+        # initialize start node
         starting_board_key = starting_board.generateKey()
         self._nodes[starting_board_key] = starting_board
 
-        # initialize start node
-
-        # put start_node in open list and calculate f = g(s) + h(s) = 0 + h(s)
-        self._open.push(node=starting_board_key, f=self.h(starting_board))
+        # put start_node in open_heap and calculate f = g(s) + h(s) = 0 + h(s)
+        self._open.push(node=starting_board_key, f=0)
 
         # set g_score
         self._g[starting_board_key] = 0
-
-        # set successors
-        self._successor[starting_board_key] = None
+        # set predecessors
+        self._predecessor[starting_board_key] = None
 
         while self._open.isNotEmpty():
-            # Logging
-            # print(f"Open: {self._open.size()}, Closed: {len(self._closed)}")
-
             # choose node from _open with minimal f(x)
-            minimal_f, minimal_node = self._open.pop_smallest()
-
+            minimal_f, best_node = self._open.pop()
             # and put it to _closed
-            self._closed.add(minimal_node)
+            self._closed.add(best_node)
 
-            # Stop after 25k open
+            # Stop after 25k open, this is just for benchmarking
             if self._open.size() >= 25_000:
                 # print("This param seems unsolvable")
                 return [], -1
 
             # check for solution --> player on top right tile and tile _open on top
-            if self._nodes.get(minimal_node).didPlayerWin():
-                # return path
-                return self.reconstruct_path(minimal_node), self._open.size()
+            if self._nodes.get(best_node).didPlayerWin():
+                # return path and the size of the open_heap
+                return self.reconstruct_path(best_node), self._open.size()
 
             # loop through all children of node with minimal f
-            for expanded_node, expanded_node_key in self.expand_node(self._nodes.get(minimal_node)):
+            for child_node, child_node_key in self.expand_node(self._nodes.get(best_node)):
 
                 # Only process node if it is not already in closed
-                if expanded_node_key not in self._closed:
+                if child_node_key not in self._closed:
 
                     # calculate the g value of the new node
-                    g = self.g(minimal_node) + 1
+                    g = self.g(best_node) + 1
 
-                    # check if expanded node is in open
-                    node_in_open = self._open.contains(expanded_node_key)
+                    # check if child node is in open
+                    node_in_open = self._open.contains(child_node_key)
 
-                    # Only process node if it is not in OPEN, or it has a smaller g value than existing node
-                    if not node_in_open or g < self.g(expanded_node_key):
-                        # set successor of expanded node to minimal_node
-                        self._successor[expanded_node_key] = minimal_node
+                    # Only process node if it is not in OPEN or it has a smaller g value than existing node
+                    if not node_in_open or g < self.g(child_node_key):
+                        # set predecessor of child node to best_node
+                        self._predecessor[child_node_key] = best_node
 
                         # set g and f
-                        self._g[expanded_node_key] = g
-                        f = g + self.h(expanded_node)
+                        self._g[child_node_key] = g
+                        f = g + self.h(child_node)
 
-                        # replace f value for the node, else push expanded node
+                        # replace f value for the node, else push child node to open
                         if node_in_open:
-                            self._open.replace(expanded_node_key, f)
+                            self._open.replace(child_node_key, f)
                         else:
-                            self._open.push(expanded_node_key, f)
+                            self._open.push(child_node_key, f)
 
-                            # Save the node/param of the expanded key
-                            self._nodes[expanded_node_key] = expanded_node
-
-            # delete minimal node object
-            # del self._nodes[minimal_node]
+                            # Save the node/param of the child key
+                            self._nodes[child_node_key] = child_node
 
     @staticmethod
     def expand_node(node, debug=False):
