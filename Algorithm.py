@@ -26,7 +26,7 @@ class Algorithm:
 
     def h(self, node):
         """
-        Calculates the heuristic for the algorithm. It is possible, to select many different heuristics for evaluation.s
+        Calculates the heuristic for the algorithm. It is possible, to select many heuristics for evaluation.s
         The standard heuristic is Heuristics.sum_shortest_distance_and_euclid with weighs 0.4 and 0.6.
 
         Args:
@@ -189,7 +189,7 @@ class Algorithm:
                     # check if child node is in open
                     node_in_open = self._open.contains(child_node_key)
 
-                    # Only process node if it is not in OPEN or it has a smaller g value than existing node
+                    # Only process node if it is not in OPEN, or it has a smaller g value than existing node
                     if not node_in_open or g < self.g(child_node_key):
                         # set predecessor of child node to best_node
                         self._predecessor[child_node_key] = best_node
