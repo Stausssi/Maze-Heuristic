@@ -1,3 +1,5 @@
+import time
+
 from Algorithm import Algorithm
 from util import BoardHelper
 
@@ -15,14 +17,16 @@ def main():
         print("Solving", board)
 
         alg = Algorithm()
+        start = time.time()
         path, openCount = alg.run(board)
+        end = time.time()
 
         for step, node in enumerate(path):
             if node is not None:
                 print(f"\n\n---------- [Step {step}] ----------\n")
                 print(node)
 
-        print(f"{openCount} Nodes were opened!\n\n")
+        print(f"{openCount} Nodes were opened! Calculation took {round(end - start,2)} seconds.\n\n")
 
 
 if __name__ == "__main__":
