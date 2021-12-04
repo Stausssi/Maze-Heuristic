@@ -342,7 +342,7 @@ def evaluate():
         None: Nothing
     """
 
-    board_count = 30
+    board_count = 50
 
     # Create a list containing the heuristics
     heuristics = [
@@ -383,6 +383,7 @@ def evaluate():
 
     allMoves = []
     allOpen = []
+    failed = 0
     for heuristic in heuristics:
         print(f"Calculating with {heuristic}...")
         paths = threadPoolCalc(boards, heuristic)
@@ -397,6 +398,7 @@ def evaluate():
                 openCount.append(path[1])
             else:
                 print(f"{heuristic} failed with Board {index - removeCount}!")
+                failed += 1
                 # Remove board from boards
                 boards.pop(index - removeCount)
 
@@ -427,6 +429,7 @@ def evaluate():
         })
 
     print(heuristics_values)
+    print(f"Failed for {failed} random boards")
 
 
 if __name__ == "__main__":
