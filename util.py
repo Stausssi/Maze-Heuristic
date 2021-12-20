@@ -121,7 +121,7 @@ class BoardHelper:
             return tiles, spareTile
 
     @staticmethod
-    def readBoardInformation(filepath) -> Tuple[int, int]:
+    def readBoardInformation(filepath) -> Tuple[Tuple[int, int], Tuple[int, int]]:
         """
         Reads the textfile at the given path and decodes the information for start and end.
 
@@ -129,7 +129,7 @@ class BoardHelper:
             filepath (str): The path to the file
 
         Returns:
-            tuple[int, int]: A tuple containing the column of the start and end point in that order
+            tuple[tuple[int, int], tuple[int, int]]: A tuple containing the position of the start and end point in that order
         """
 
         mapping = {
@@ -149,24 +149,35 @@ class BoardHelper:
                         # Extract the integer out of the line
                         lineContent = line.replace("Spalte ", "").split(" ")
 
+                        value = int(lineContent[0]) - 1
+
+                        if lineContent[1] == "oben":
+                            value = (0, value)
+                        elif lineContent[1] == "unten":
+                            value = (4, value)
+                        else:
+                            raise ValueError(
+                                f"Invalid information file. Expected 'oben' or 'unten', not '{lineContent[1]}'"
+                            )
+
                         mapping.update({
-                            nextValue: int(lineContent[0])
+                            nextValue: value
                         })
 
                         nextValue = ""
 
-        return mapping.get("Startposition:") - 1, mapping.get("Zielposition") - 1
+        return mapping.get("Startposition:"), mapping.get("Zielposition")
 
     @staticmethod
-    def generateBoard(tile_codes, spareTile_code, startTile_column, endTile_column):
+    def generateBoard(tile_codes, spareTile_code, startTile_pos, endTile_pos):
         """
         Generates a Board object with the given codes and positions.
 
         Args:
             tile_codes (list[list[int]]): The encoded tile representation of the board.
             spareTile_code (int): The encoded spare tile.
-            startTile_column (int): The column of the start tile
-            endTile_column (int): The column of the end tile
+            startTile_pos (tuple[int, int]): The position (row, col) of the start tile
+            endTile_pos (tuple[int, int]): The position (row, col) of the end tile
 
         Returns:
             Board: A board with the given specifications.
@@ -190,11 +201,7 @@ class BoardHelper:
         # get the spare tile
         spareTile = Tile(BoardHelper.reversedTileEncodings.get(spareTile_code))
 
-        # Set the start and end positions
-        start_tile_pos = (len(tiles) - 1, startTile_column)
-        end_tile_pos = (0, endTile_column)
-
-        return Board(tiles=tiles, spareTile=spareTile, startTilePos=start_tile_pos, endTilePos=end_tile_pos)
+        return Board(tiles=tiles, spareTile=spareTile, startTilePos=startTile_pos, endTilePos=endTile_pos)
 
 
 def wrapInBorder(message) -> str:

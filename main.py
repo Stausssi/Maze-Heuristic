@@ -11,9 +11,9 @@ def main():
 
     for boardIndex in range(1, 3):
         field, spareTile = BoardHelper.readBoardFromCSV(f"data/puzzle_{boardIndex}.csv")
-        startColumn, endColumn = BoardHelper.readBoardInformation(f"data/info_{boardIndex}.txt")
+        startPos, endPos = BoardHelper.readBoardInformation(f"data/info_{boardIndex}.txt")
 
-        board = BoardHelper.generateBoard(field, spareTile, startColumn, endColumn)
+        board = BoardHelper.generateBoard(field, spareTile, startPos, endPos)
         print("Solving", board)
 
         alg = Algorithm()
