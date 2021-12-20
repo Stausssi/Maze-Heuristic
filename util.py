@@ -145,7 +145,7 @@ class BoardHelper:
                     # Check if line value has a dict entry
                     if mapping.get(line) is not None:
                         nextValue = line
-                    elif nextValue != "":
+                    elif nextValue != "" and line.startswith("Spalte"):
                         # Extract the integer out of the line
                         lineContent = line.replace("Spalte ", "").split(" ")
 
