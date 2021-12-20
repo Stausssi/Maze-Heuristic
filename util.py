@@ -160,7 +160,6 @@ class BoardHelper:
                                 f"Invalid information file ('{filepath}')! Expected 'oben' or 'unten', "
                                 f"not '{lineContent[1]}'"
                             )
-                            print("Exiting...")
                             exit(1)
 
                         mapping.update({
