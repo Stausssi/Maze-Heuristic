@@ -15,7 +15,7 @@ def main():
     parser.add_argument("-i", help="info_x.txt file")
     args = parser.parse_args()
 
-    field, spareTile, startColumn, endColumn = None, None, None, None
+    field, spareTile, startPos, endPos = None, None, None, None
 
     try:
         field, spareTile = BoardHelper.readBoardFromCSV(f"data/{args.p}")
