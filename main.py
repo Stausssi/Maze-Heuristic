@@ -24,12 +24,12 @@ def main():
         exit(1)
 
     try:
-        startColumn, endColumn = BoardHelper.readBoardInformation(f"data/{args.i}")
+        startPos, endPos = BoardHelper.readBoardInformation(f"data/{args.i}")
     except FileNotFoundError:
         print(f"The file {args.i} was not found in the folder data.")
         exit(1)
 
-    board = BoardHelper.generateBoard(field, spareTile, startColumn, endColumn)
+    board = BoardHelper.generateBoard(field, spareTile, startPos, endPos)
     print("Solving", board)
 
     alg = Algorithm()
