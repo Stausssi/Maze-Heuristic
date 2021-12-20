@@ -156,9 +156,12 @@ class BoardHelper:
                         elif lineContent[1] == "unten":
                             value = (4, value)
                         else:
-                            raise ValueError(
-                                f"Invalid information file. Expected 'oben' or 'unten', not '{lineContent[1]}'"
+                            print(
+                                f"Invalid information file ('{filepath}')! Expected 'oben' or 'unten', "
+                                f"not '{lineContent[1]}'"
                             )
+                            print("Exiting...")
+                            exit(1)
 
                         mapping.update({
                             nextValue: value
